@@ -30,8 +30,8 @@ export default function ReconLogs() {
           transition={{ duration: 0.65, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center mb-8"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-            RECON_LOGS:_DEVDAY&apos;25
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 p-2">
+            RECON_LOGS: _DEVDAY&apos;25
           </h2>
           <p className="text-gray-400 text-sm md:text-base max-w-4xl mx-auto leading-relaxed">
             DEVDAY&apos;25 WAS A MASSIVE SUCCESS, WITNESSING EXCEPTIONAL

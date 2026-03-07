@@ -151,7 +151,7 @@ export default function Footer() {
                   DESIGN CREW
                 </p>
                 <p className="leading-relaxed">
-                  Hasan Sami · Asjad Bin Rehan · Sameed Jamal
+                  Hasan Sami · Asjad Bin Rehan · Sameed Jamal · Wareesha Faheem
                 </p>
               </div>
               

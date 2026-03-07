@@ -28,12 +28,12 @@ export default function ContactUs() {
       phone: "+92 3303714539",
       label: "CALL NOW:",
     },
-    // {
-    //   category: "PUBLIC_RELATIONS",
-    //   name: "UMAIMA FATIMA",
-    //   phone: "+92 3171008949",
-    //   label: "CALL NOW:",
-    // },
+    {
+      category: "PARTICIPANT_RELATIONS",
+      name: "NOMEER AHSAN",
+      phone: "+92 3171008949",
+      label: "CALL NOW:",
+    },
   ];
 
   const socialLinks = [
