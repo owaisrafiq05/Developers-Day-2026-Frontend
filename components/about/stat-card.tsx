@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 
 interface StatCardProps {
-  stat: string;
+  stat: React.ReactNode;
   title: string;
   icon: ReactNode;
   variant?: "red" | "dark";

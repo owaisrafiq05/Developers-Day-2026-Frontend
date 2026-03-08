@@ -2,7 +2,46 @@
 
 import StatCard from "./stat-card";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView, useMotionValue, useTransform, animate } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+
+function useCountAnimation(target: number, duration: number = 2, shouldStart: boolean = false) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!shouldStart) return;
+
+    const controls = animate(0, target, {
+      duration,
+      ease: [0.25, 0.1, 0.25, 1],
+      onUpdate(value) {
+        setCount(Math.floor(value));
+      },
+    });
+
+    return () => controls.stop();
+  }, [target, duration, shouldStart]);
+
+  return count;
+}
+
+function AnimatedStat({ stat }: { stat: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+
+  // Parse number and suffix (e.g. "4500+" → 4500, "+")
+  const match = stat.match(/^(\d+)(\+?)$/);
+  const numericValue = match ? parseInt(match[1], 10) : null;
+  const suffix = match ? match[2] : "";
+
+  const count = useCountAnimation(numericValue ?? 0, 2, isInView && numericValue !== null);
+
+  return (
+    <span ref={ref}>
+      {numericValue !== null ? `${count}${suffix}` : stat}
+    </span>
+  );
+}
 
 export default function AboutUs() {
   const stats = [
@@ -105,7 +144,10 @@ export default function AboutUs() {
                 ease: [0.25, 0.1, 0.25, 1],
               }}
             >
-              <StatCard {...card} />
+              <StatCard
+                {...card}
+                stat={<AnimatedStat stat={card.stat} />}
+              />
             </motion.div>
           ))}
         </div>

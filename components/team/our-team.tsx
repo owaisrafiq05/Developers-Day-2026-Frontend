@@ -78,13 +78,11 @@ const teamMembers = [
     name: "SAUD MALIK",
     role: roleFromFilename("Event_Administrator.png"),
     image: "/team/Event_Administrator.png",
-    linkedInUrl: "#", // no link provided
   },
   {
     name: "ABDUL HADI",
     role: roleFromFilename("Director_MEDIA.png"),
     image: "/team/Director_MEDIA.png",
-    linkedInUrl: "#",
   },
 ].map((member, index) => ({
   ...member,
