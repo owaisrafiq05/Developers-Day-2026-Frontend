@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 export default function ModuleCategories() {
   const modules = [
     {
+      id: "coding-competitions",
       icon: (
         <Image src="/icons/coding.svg" alt="Coding" width={32} height={32} />
       ),
@@ -18,6 +19,7 @@ export default function ModuleCategories() {
       code: "C_01",
     },
     {
+      id: "software-engineering",
       icon: (
         <Image
           src="/icons/software.svg"
@@ -32,6 +34,7 @@ export default function ModuleCategories() {
       code: "C_02",
     },
     {
+      id: "tech-quest",
       icon: (
         <Image src="/icons/tech.svg" alt="Tech" width={32} height={32} />
       ),
@@ -41,6 +44,7 @@ export default function ModuleCategories() {
       code: "C_03",
     },
     {
+      id: "build-break",
       icon: (
         <Image src="/icons/build.svg" alt="Build" width={32} height={32} />
       ),
@@ -50,6 +54,7 @@ export default function ModuleCategories() {
       code: "C_04",
     },
     {
+      id: "ai-data",
       icon: <Image src="/icons/ai.svg" alt="AI" width={32} height={32} />,
       title: "AI_&_DATA",
       description:

@@ -6,13 +6,14 @@ import { Link } from "@heroui/link";
 import Image from "next/image";
 
 interface ModuleCardProps {
+  id: string;
   icon: ReactNode;
   title: string;
   description: string;
   code: string;
 }
 
-export default function ModuleCard({ icon, title, description, code }: ModuleCardProps) {
+export default function ModuleCard({ id, icon, title, description, code }: ModuleCardProps) {
   return (
     <div className="bg-dark-red-1 flex flex-col h-[350px] overflow-hidden">
       {/* Content Area */}
@@ -34,7 +35,7 @@ export default function ModuleCard({ icon, title, description, code }: ModuleCar
       <div className="px-6 pb-6">
         <Button
           as={Link}
-          href="#"
+          href={`/modules/${id}`}
           className="bg-dark-red-2 hover:bg-dark-red-2 text-white font-mono text-sm w-full justify-between"
           radius="none"
           fullWidth
