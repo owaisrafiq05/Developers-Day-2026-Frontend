@@ -120,6 +120,12 @@
     fill: transparent !important;
 }
 
+/* Custom dashed border for receipt */
+.border-dashed-wide {
+    border-style: dashed;
+    border-spacing: 10px;
+}
+
 /* Make the SVG responsive and avoid horizontal scrollbars */
 .campus-map svg {
     width: 100%;
