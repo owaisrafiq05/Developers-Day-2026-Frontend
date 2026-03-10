@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@heroui/button";
 import { CheckCircleIcon, DocumentArrowDownIcon } from "@heroicons/react/24/solid";
 
@@ -25,17 +26,30 @@ export default function RegistrationReceipt({
     onDownloadRulebook,
 }: RegistrationReceiptProps) {
     const totalFee = moduleFee - discount;
-    const currentDate = new Date().toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric",
+
+    const [timestamp, setTimestamp] = useState<{
+        date: string;
+        time: string;
+    }>({
+        date: "--/--/----",
+        time: "--:--:-- --",
     });
-    const currentTime = new Date().toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-    });
+
+    useEffect(() => {
+        const now = new Date();
+        const date = now.toLocaleDateString("en-US", {
+            month: "2-digit",
+            day: "2-digit",
+            year: "numeric",
+        });
+        const time = now.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+        });
+        setTimestamp({ date, time });
+    }, []);
 
     return (
         <div className="bg-dark-red-4 border-2 border-red-primary p-6 md:p-8 relative font-mono">
@@ -55,7 +69,7 @@ export default function RegistrationReceipt({
                     REGISTRATION_RECEIPT.LOG
                 </h2>
                 <p className="text-red-primary text-xs md:text-sm">
-                    Timestamp: {currentDate} // {currentTime} PST
+                    Timestamp: {timestamp.date} // {timestamp.time} PST
                 </p>
                 <p className="text-red-primary text-xs md:text-sm">
                     Module_Date_Reserved: 12-04-2025 // 9:00:00 AM PST

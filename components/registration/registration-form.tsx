@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
+// @ts-ignore – sonner types may not be available in this project yet
+import { toast } from "sonner";
 import RegistrationReceipt from "./registration-receipt";
 import { submitPublicRegistration } from "@/lib/api/registration";
 import type { TeamMemberInput } from "@/types/registration";
@@ -34,9 +36,30 @@ const EMPTY_MEMBER: TeamMemberInput = {
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^03\d{9}$/;
+const cnicDisplayRegex = /^\d{5}-\d{7}-\d{1}$/;
 
 function normalizeCnic(cnic: string): string {
     return cnic.replace(/[^0-9]/g, "");
+}
+
+function formatPhoneInput(value: string): string {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 11);
+    return digitsOnly;
+}
+
+function formatCnicDisplay(value: string): string {
+    const digits = value.replace(/\D/g, "").slice(0, 13);
+
+    if (digits.length <= 5) {
+        return digits;
+    }
+
+    if (digits.length <= 12) {
+        return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+    }
+
+    return `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12)}`;
 }
 
 export default function RegistrationForm() {
@@ -112,8 +135,29 @@ export default function RegistrationForm() {
     };
 
     const addMember = () => {
+        const selectedCompetition = competitions.find(
+            (comp) => comp.id === formData.competitionId
+        );
+
+        if (selectedCompetition) {
+            const maxTeamSize = selectedCompetition.maxTeamSize;
+            const maxAdditionalMembers = Math.max(maxTeamSize - 1, 0); // excluding leader
+            const currentMemberRows = formData.members.length;
+
+            if (currentMemberRows >= maxAdditionalMembers) {
+                const message = `You can add up to ${maxAdditionalMembers} members (excluding the leader) for this competition.`;
+                setSubmitError(message);
+                toast.error(message);
+                return;
+            }
+        }
+
         if (formData.members.length >= 4) return;
-        setFormData((prev) => ({ ...prev, members: [...prev.members, { ...EMPTY_MEMBER }] }));
+
+        setFormData((prev) => ({
+            ...prev,
+            members: [...prev.members, { ...EMPTY_MEMBER }],
+        }));
     };
 
     const removeMember = (index: number) => {
@@ -133,8 +177,16 @@ export default function RegistrationForm() {
         if (!formData.leaderName.trim()) return "Leader name is required.";
         if (!emailRegex.test(formData.leaderEmail.trim())) return "Please enter a valid leader email.";
 
-        const leaderCnic = normalizeCnic(formData.leaderCnic);
-        if (leaderCnic.length < 13) return "Leader CNIC must contain at least 13 digits.";
+        const phone = formData.leaderPhone.trim();
+        if (!phoneRegex.test(phone)) {
+            return "Leader phone must be in the format 03XXXXXXXXX (e.g. 03363277876).";
+        }
+
+        const cnicRaw = formData.leaderCnic.trim();
+        const cnicDigits = normalizeCnic(cnicRaw);
+        if (cnicDigits.length !== 13 || (!cnicDisplayRegex.test(cnicRaw) && cnicRaw !== cnicDigits)) {
+            return "Leader CNIC must contain 13 digits in the format 12345-1234567-1.";
+        }
 
         return null;
     };
@@ -147,16 +199,42 @@ export default function RegistrationForm() {
 
     const validateMembersTab = (): string | null => {
         const validMembers = getValidMembers();
+
         for (let index = 0; index < validMembers.length; index++) {
             const member = validMembers[index];
             const number = index + 1;
 
             if (!member.fullName?.trim()) return `Member ${number}: full name is required.`;
             if (!emailRegex.test(member.email?.trim() || "")) return `Member ${number}: valid email is required.`;
-            if (normalizeCnic(member.cnic || "").length < 13) {
-                return `Member ${number}: CNIC must contain at least 13 digits.`;
+
+            const cnicRaw = member.cnic || "";
+            const cnicDigits = normalizeCnic(cnicRaw);
+            if (cnicDigits.length !== 13 || (!cnicDisplayRegex.test(cnicRaw) && cnicRaw !== cnicDigits)) {
+                return `Member ${number}: CNIC must contain 13 digits in the format 12345-1234567-1.`;
+            }
+
+            const phone = member.phone?.trim();
+            if (phone && !phoneRegex.test(phone)) {
+                return `Member ${number}: phone must be in the format 03XXXXXXXXX (e.g. 03363277876).`;
             }
         }
+
+        const selectedCompetition = competitions.find(
+            (comp) => comp.id === formData.competitionId
+        );
+
+        if (selectedCompetition) {
+            const totalMembers = validMembers.length + 1; // include leader
+
+            if (totalMembers < selectedCompetition.minTeamSize) {
+                return `This competition requires at least ${selectedCompetition.minTeamSize} members including the leader. You currently have ${totalMembers}.`;
+            }
+
+            if (totalMembers > selectedCompetition.maxTeamSize) {
+                return `This competition allows at most ${selectedCompetition.maxTeamSize} members including the leader. You currently have ${totalMembers}.`;
+            }
+        }
+
         return null;
     };
 
@@ -167,6 +245,7 @@ export default function RegistrationForm() {
         const teamError = validateTeamTab();
         if (teamError) {
             setSubmitError(teamError);
+            toast.error(teamError);
             setActiveTab("team");
             return;
         }
@@ -174,6 +253,7 @@ export default function RegistrationForm() {
         const leaderError = validateLeaderTab();
         if (leaderError) {
             setSubmitError(leaderError);
+            toast.error(leaderError);
             setActiveTab("leader");
             return;
         }
@@ -181,12 +261,15 @@ export default function RegistrationForm() {
         const membersError = validateMembersTab();
         if (membersError) {
             setSubmitError(membersError);
+            toast.error(membersError);
             setActiveTab("members");
             return;
         }
 
         if (!formData.paymentScreenshot) {
-            setSubmitError("Please upload the payment screenshot before submitting.");
+            const message = "Please upload the payment screenshot before submitting.";
+            setSubmitError(message);
+            toast.error(message);
             return;
         }
 
@@ -213,9 +296,15 @@ export default function RegistrationForm() {
                 paymentScreenshot: formData.paymentScreenshot,
             });
 
-            setSubmitSuccess("Registration submitted successfully. You will receive a confirmation email soon.");
+            const successMessage =
+                "Registration submitted successfully. You will receive a confirmation email soon.";
+            setSubmitSuccess(successMessage);
+            toast.success(successMessage);
         } catch (error: any) {
-            setSubmitError(error?.message || "Failed to submit registration. Please try again.");
+            const message =
+                error?.message || "Failed to submit registration. Please try again.";
+            setSubmitError(message);
+            toast.error(message);
         } finally {
             setIsSubmitting(false);
         }
@@ -243,6 +332,9 @@ export default function RegistrationForm() {
 
     const paymentStatus = formData.paymentScreenshot ? "SUBMITTED" : "NONE";
     const teamMembersCount = getValidMembers().length + 1;
+    const selectedCompetition = competitions.find(
+        (comp) => comp.id === formData.competitionId
+    );
 
     return (
         <div className="space-y-8">
@@ -286,7 +378,9 @@ export default function RegistrationForm() {
 
             {/* Form Content */}
             <div className="bg-dark-red-1 border border-gray-800 p-6 md:p-8">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8 uppercase">{tabs.find((t) => t.id === activeTab)?.label}</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 uppercase">
+                    {tabs.find((t) => t.id === activeTab)?.label}
+                </h2>
 
                 {/* Team Information Tab */}
                 {activeTab === "team" && (
@@ -456,8 +550,12 @@ export default function RegistrationForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Input
                                 placeholder="PHONE_NUMBER"
+                                type="tel"
+                                inputMode="numeric"
                                 value={formData.leaderPhone}
-                                onValueChange={(value) => updateFormData("leaderPhone", value)}
+                                onValueChange={(value) =>
+                                    updateFormData("leaderPhone", formatPhoneInput(value))
+                                }
                                 classNames={{
                                     input: "bg-dark-red text-white placeholder:text-gray-600",
                                     inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
@@ -466,8 +564,12 @@ export default function RegistrationForm() {
                             />
                             <Input
                                 placeholder="CNIC"
+                                type="text"
+                                inputMode="numeric"
                                 value={formData.leaderCnic}
-                                onValueChange={(value) => updateFormData("leaderCnic", value)}
+                                onValueChange={(value) =>
+                                    updateFormData("leaderCnic", formatCnicDisplay(value))
+                                }
                                 classNames={{
                                     input: "bg-dark-red text-white placeholder:text-gray-600",
                                     inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
@@ -525,8 +627,12 @@ export default function RegistrationForm() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <Input
                                         placeholder="CNIC"
+                                        type="text"
+                                        inputMode="numeric"
                                         value={member.cnic}
-                                        onValueChange={(value) => updateMember(index, "cnic", value)}
+                                        onValueChange={(value) =>
+                                            updateMember(index, "cnic", formatCnicDisplay(value))
+                                        }
                                         classNames={{
                                             input: "bg-dark-red text-white placeholder:text-gray-600",
                                             inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
@@ -536,7 +642,11 @@ export default function RegistrationForm() {
                                     <Input
                                         placeholder="PHONE (OPTIONAL)"
                                         value={member.phone || ""}
-                                        onValueChange={(value) => updateMember(index, "phone", value)}
+                                        type="tel"
+                                        inputMode="numeric"
+                                        onValueChange={(value) =>
+                                            updateMember(index, "phone", formatPhoneInput(value))
+                                        }
                                         classNames={{
                                             input: "bg-dark-red text-white placeholder:text-gray-600",
                                             inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
@@ -561,7 +671,16 @@ export default function RegistrationForm() {
                             className="bg-gray-800 hover:bg-gray-700 text-white font-mono text-sm"
                             radius="none"
                             onPress={addMember}
-                            isDisabled={formData.members.length >= 4}
+                            isDisabled={
+                                (() => {
+                                    if (!selectedCompetition) return false;
+                                    const maxAdditionalMembers = Math.max(
+                                        selectedCompetition.maxTeamSize - 1,
+                                        0
+                                    );
+                                    return formData.members.length >= maxAdditionalMembers;
+                                })()
+                            }
                         >
                             + ADD_MEMBER
                         </Button>
@@ -615,17 +734,6 @@ export default function RegistrationForm() {
                             </div>
                         </div>
 
-                        {submitError && (
-                            <p className="mt-2 text-xs md:text-sm text-red-400 font-mono">
-                                {submitError}
-                            </p>
-                        )}
-                        {submitSuccess && (
-                            <p className="mt-2 text-xs md:text-sm text-emerald-400 font-mono">
-                                {submitSuccess}
-                            </p>
-                        )}
-
                         {/* Screenshot upload field */}
                         <div className="space-y-4">
                             <div>
@@ -648,7 +756,9 @@ export default function RegistrationForm() {
                                                 const allowedTypes = ["image/png", "image/jpeg"];
 
                                                 if (file && (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024)) {
-                                                    setSubmitError("Please upload a PNG/JPG/JPEG image up to 5MB.");
+                                                    const message = "Please upload a PNG/JPG/JPEG image up to 5MB.";
+                                                    setSubmitError(message);
+                                                    toast.error(message);
                                                     return;
                                                 }
 
@@ -710,7 +820,7 @@ export default function RegistrationForm() {
                     <Button
                         className="bg-gray-800 hover:bg-gray-700 text-white font-mono"
                         radius="none"
-                        isDisabled={activeTab === "team"}
+                        isDisabled={activeTab === "team" || isSubmitting}
                         onPress={() => {
                             const currentIndex = tabs.findIndex((t) => t.id === activeTab);
                             if (currentIndex > 0) setActiveTab(tabs[currentIndex - 1].id);
@@ -722,6 +832,7 @@ export default function RegistrationForm() {
                         className="bg-red-primary hover:bg-red-700 text-white font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                         radius="none"
                         isDisabled={isSubmitting}
+                        isLoading={isSubmitting && activeTab === "payment"}
                         onPress={() => {
                             const currentIndex = tabs.findIndex((t) => t.id === activeTab);
                             if (activeTab === "payment") {
@@ -733,6 +844,7 @@ export default function RegistrationForm() {
                                 const teamError = validateTeamTab();
                                 if (teamError) {
                                     setSubmitError(teamError);
+                                    toast.error(teamError);
                                     return;
                                 }
                             }
@@ -741,6 +853,7 @@ export default function RegistrationForm() {
                                 const leaderError = validateLeaderTab();
                                 if (leaderError) {
                                     setSubmitError(leaderError);
+                                    toast.error(leaderError);
                                     return;
                                 }
                             }
@@ -749,6 +862,7 @@ export default function RegistrationForm() {
                                 const membersError = validateMembersTab();
                                 if (membersError) {
                                     setSubmitError(membersError);
+                                    toast.error(membersError);
                                     return;
                                 }
                             }
@@ -769,7 +883,7 @@ export default function RegistrationForm() {
                 leaderName={formData.leaderName}
                 moduleName={formData.competitionId}
                 teamMembers={teamMembersCount}
-                moduleFee={2500}
+                moduleFee={selectedCompetition ? Number(selectedCompetition.fee) : 0}
                 discount={0}
                 paymentStatus={paymentStatus}
                 onDownloadRulebook={handleDownloadRulebook}
