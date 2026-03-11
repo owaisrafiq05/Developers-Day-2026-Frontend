@@ -8,7 +8,9 @@ import { motion } from "framer-motion";
 export interface CompetitionCardProps {
   title: string;
   description: string;
-  teamCount: string;
+  minTeamSize: number;
+  maxTeamSize: number;
+  earlyBirdLimit: number;
   earlyBirdPrice: number;
   normalPrice: number;
   registerHref?: string;
@@ -17,7 +19,9 @@ export interface CompetitionCardProps {
 export default function CompetitionCard({
   title,
   description,
-  teamCount,
+  minTeamSize,
+  maxTeamSize,
+  earlyBirdLimit,
   earlyBirdPrice,
   normalPrice,
   registerHref = "/register",
@@ -43,35 +47,44 @@ export default function CompetitionCard({
           {/* Team Size */}
           <div className="bg-[#1A1A1A] p-3 w-full border border-[#FFFFFF0D] border-l-2 border-l-[var(--color,#2563EB)] flex flex-col items-baseline gap-2">
             <UserGroupIcon className="w-4 h-4 text-[var(--color,#2563EB)]" />
-            <span className="text-white text-sm">TEAM: {teamCount}</span>
+            <span className="text-white text-sm">TEAM: {maxTeamSize==1 ? 'Individual' : `${minTeamSize}-${maxTeamSize} Members`}</span>
           </div>
 
           {/* Fees */}
           <div className="bg-[#1A1A1A] p-3 w-full border border-[#FFFFFF0D] border-l-2 border-l-[var(--color,#2563EB)] flex flex-col items-baseline gap-2">
-            <div className="flex gap-4 items-center">
-              <BanknotesIcon className="w-4 h-4 text-[var(--color,#2563EB)]" />
-              <span className="text-white text-xs">Early Bird Discount</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-gray-500 line-through">PKR {normalPrice}</span>
-              <span className="text-white font-semibold">PKR {earlyBirdPrice}</span>
-            </div>
+            {earlyBirdLimit > 0 ? (
+              <>
+                <div className="flex gap-4 items-center">
+                  <BanknotesIcon className="w-4 h-4 text-[var(--color,#2563EB)]" />
+                  <span className="text-white text-xs">Early Bird Discount</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-500 line-through">PKR {normalPrice}</span>
+                  <span className="text-white font-semibold">PKR {earlyBirdPrice}</span>
+                </div>
+              </>
+            ) :
+              <>
+                <BanknotesIcon className="w-4 h-4 text-[var(--color,#2563EB)]" />
+                <span className="text-white">PKR {normalPrice}</span>
+              </>
+            }
           </div>
-        </div>
 
-        {/* Register Button */}
-        <Button
-          fullWidth
-          as={Link}
-          href={registerHref}
-          radius="none"
-          size="lg"
-          className="font-bold tracking-widest text-sm justify-between px-5 bg-[var(--color,#2563EB)] hover:border hover:border-[var(--color,#2563EB)] hover:text-[var(--color,#2563EB)] hover:bg-transparent flex-shrink-0"
-          endContent={<span className="text-lg font-bold">→</span>}
-        >
-          REGISTER NOW
-        </Button>
-      </div>
+          {/* Register Button */}
+          <Button
+            fullWidth
+            as={Link}
+            href={registerHref}
+            radius="none"
+            size="lg"
+            className="font-bold tracking-widest text-sm justify-between px-5 bg-[var(--color,#2563EB)] hover:border hover:border-[var(--color,#2563EB)] hover:text-[var(--color,#2563EB)] hover:bg-transparent flex-shrink-0"
+            endContent={<span className="text-lg font-bold">→</span>}
+          >
+            REGISTER NOW
+          </Button>
+        </div>
+        </div>  
     </motion.div>
   );
 }

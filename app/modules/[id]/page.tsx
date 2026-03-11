@@ -7,7 +7,7 @@ const modules = [
     {
         id: "coding",
         icon: "/icons/coding.svg",
-        title: "CODIND_COMPETITIONS",
+        title: "CODING_COMPETITIONS",
         description:
             "Solve algorithmic challenges and compete in real-time coding competitions.",
         color: "#2563EB",
@@ -79,6 +79,34 @@ const modules = [
     },
 ];
 
+async function getCompetitions() {
+    await new Promise((resolve) => setTimeout(resolve, 3000)); // 👈 add this
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/competitions/public`,
+        {
+            next: { revalidate: 3600 }, // cache for 1 hour
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch competitions");
+    }
+
+    const data = await res.json();
+    return data.data;
+}
+
+const idToCategoryMap: { [key: string]: string } = {
+    "coding": "Core Coding",
+    "software-eng": "Software Engineering",
+    "tech-quest": "Tech Quest",
+    "dev-design": "Development & Design",
+    "ai-data": "AI & Data Science",
+    "general": "General",
+    "electrical-eng": "Electrical Engineering",
+    "business": "Business",
+};
+
 export default async function ModulePage({
     params,
 }: {
@@ -93,9 +121,14 @@ export default async function ModulePage({
         );
     }
 
+    const competitions = await getCompetitions();
+    const category = idToCategoryMap[moduleId];
+    const categoryCompetitions = competitions.filter(
+        (c: any) => c.category === category
+    );
     return (
         <>
-            <ModuleCompetitions {...selectedModule} />
+            <ModuleCompetitions {...selectedModule} categoryCompetitions={categoryCompetitions} />
             <RegistrationBanner />
         </>
     );

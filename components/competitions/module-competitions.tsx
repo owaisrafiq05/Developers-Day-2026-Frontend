@@ -17,11 +17,15 @@ import {
 import CompetitionCard from "./competition-card";
 
 type Competition = {
+  id:string,
   name: string;
+  category: string;
   description: string;
-  teamCount: string;
-  earlyBirdPrice: number;
-  normalPrice: number;
+  earlyBirdFee: number;
+  earlyBirdLimit: number;
+  fee: number;
+  minTeamSize: number;
+  maxTeamSize: number;
 };
 
 /* ── animation variants ── */
@@ -41,13 +45,14 @@ const cardVariants = {
   },
 };
 
-export interface ModuleCompetitionsProps {
+export interface CompetitionsCateogoryProps {
   id: string;
   icon: any;
   title: string;
   description: string;
   color: string;
   bgColor: string;
+  categoryCompetitions: Competition[];
 }
 
 export default function ModuleCompetitions({
@@ -57,8 +62,9 @@ export default function ModuleCompetitions({
   description: _description,
   color,
   bgColor,
-}: ModuleCompetitionsProps) {
-  const competitions = competitionData[id as keyof typeof competitionData] || [];
+  categoryCompetitions
+}: CompetitionsCateogoryProps) {
+  
   return (
     <section
       className="bg-[var(--bg-color)] text-white py-16 md:py-24 px-4"
@@ -138,14 +144,17 @@ export default function ModuleCompetitions({
           initial="hidden"
           variants={containerVariants}
         >
-        {competitions.map((comp: Competition, idx:number) => (
-            <motion.div key={comp.name + idx} variants={cardVariants}>
+        {categoryCompetitions.map((comp: Competition) => (
+            <motion.div key={comp.id} variants={cardVariants}>
               <CompetitionCard
                 title={comp.name}
                 description={comp.description}
-                teamCount={comp.teamCount}
-                earlyBirdPrice={comp.earlyBirdPrice}
-                normalPrice={comp.normalPrice}
+                minTeamSize={comp.minTeamSize}
+                maxTeamSize={comp.maxTeamSize}
+                earlyBirdLimit= {comp.earlyBirdLimit}
+                earlyBirdPrice={comp.earlyBirdFee}
+                normalPrice={comp.fee}
+                registerHref = {"/register"+`?competition=${comp.id}`}
               />
             </motion.div>
           ))}
