@@ -36,3 +36,30 @@ export async function fetchCompetitionsWithCategory(): Promise<
   return (json.data || []) as CompetitionWithCategory[];
 }
 
+export async function fetchCompetitionById(
+  id: string
+): Promise<CompetitionWithCategory> {
+  if (!API_ROOT) {
+    throw new Error(
+      "API base URL is not configured. Please set NEXT_PUBLIC_API_BASE_URL."
+    );
+  }
+
+  const response = await fetch(`${API_ROOT}/competitions/public/${id}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  const json = await response.json();
+
+  if (!response.ok || !json.success) {
+    const message =
+      json?.message ||
+      (Array.isArray(json?.errors) && json.errors[0]?.message) ||
+      "Failed to fetch competition.";
+    throw new Error(message);
+  }
+
+  return json.data as CompetitionWithCategory;
+}
+

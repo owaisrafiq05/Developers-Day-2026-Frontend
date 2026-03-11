@@ -17,6 +17,7 @@ export interface PublicRegistrationRequest {
   leaderInstitution?: string;
   members: TeamMemberInput[];
   paymentScreenshot: File;
+  isEarlyBird: boolean;
 }
 
 export interface PublicRegistrationResponse {
