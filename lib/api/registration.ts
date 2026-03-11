@@ -47,6 +47,7 @@ export async function submitPublicRegistration(
   }
 
   formData.append("paymentScreenshot", payload.paymentScreenshot);
+  formData.append("isEarlyBird", String(payload.isEarlyBird));
 
   const response = await fetch(`${API_ROOT}/public/registrations`, {
     method: "POST",

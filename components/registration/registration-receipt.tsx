@@ -124,9 +124,9 @@ export default function RegistrationReceipt({
                     </div>
 
                     <div className="flex justify-between items-center py-4 border-b-2 border-[#392828]">
-                        <span className="text-gray-500 text-sm uppercase">DISCOUNTS_APPLIED</span>
+                        <span className="text-gray-500 text-sm uppercase">Early_Bird</span>
                         <span className="text-white text-base font-bold">
-                            {discount > 0 ? `${discount} PKR - Early Bird` : "NONE"}
+                            {discount > 0 ? `${discount} PKR` : "NONE"}
                         </span>
                     </div>
 

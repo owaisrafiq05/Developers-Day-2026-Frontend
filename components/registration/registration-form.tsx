@@ -10,7 +10,7 @@ import RegistrationReceipt from "./registration-receipt";
 import { submitPublicRegistration } from "@/lib/api/registration";
 import type { TeamMemberInput } from "@/types/registration";
 import type { CompetitionWithCategory } from "@/types/competitions";
-import { fetchCompetitionsWithCategory } from "@/lib/api/competitions";
+import { fetchCompetitionsWithCategory, fetchCompetitionById } from "@/lib/api/competitions";
 
 type TabType = "team" | "leader" | "members" | "payment";
 
@@ -74,6 +74,10 @@ export default function RegistrationForm() {
     const [isLoadingCompetitions, setIsLoadingCompetitions] = useState(true);
     const [competitionError, setCompetitionError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const [amountDue, setAmountDue] = useState<number | null>(null);
+    const [isLoadingAmountDue, setIsLoadingAmountDue] = useState(false);
+    const [isEarlyBirdActive, setIsEarlyBirdActive] = useState(false);
+    const [latestCompetitionDetail, setLatestCompetitionDetail] = useState<CompetitionWithCategory | null>(null);
     const [formData, setFormData] = useState<FormData>({
         teamName: "",
         competitionId: "",
@@ -86,6 +90,33 @@ export default function RegistrationForm() {
         members: [{ ...EMPTY_MEMBER }],
         paymentScreenshot: null,
     });
+
+    useEffect(() => {
+        if (activeTab !== "payment" || !formData.competitionId) return;
+
+        let isMounted = true;
+        setIsLoadingAmountDue(true);
+        setAmountDue(null);
+        setIsEarlyBirdActive(false);
+        setLatestCompetitionDetail(null);
+
+        (async () => {
+            try {
+                const comp = await fetchCompetitionById(formData.competitionId);
+                if (!isMounted) return;
+                setLatestCompetitionDetail(comp);
+                const earlyBird = comp.earlyBirdLimit > 0;
+                setIsEarlyBirdActive(earlyBird);
+                setAmountDue(earlyBird ? comp.earlyBirdFee : comp.fee);
+            } catch {
+                // silently fall back — amount due stays null
+            } finally {
+                if (isMounted) setIsLoadingAmountDue(false);
+            }
+        })();
+
+        return () => { isMounted = false; };
+    }, [activeTab, formData.competitionId]);
 
     useEffect(() => {
         let isMounted = true;
@@ -172,6 +203,10 @@ export default function RegistrationForm() {
     const validateTeamTab = (): string | null => {
         if (!formData.teamName.trim()) return "Team name is required.";
         if (!formData.competitionId.trim()) return "Please select a competition.";
+        const picked = competitions.find((comp) => comp.id === formData.competitionId);
+        if (picked && picked.capacityLimit <= 0) {
+            return "This competition is full. Please select another competition.";
+        }
         return null;
     };
 
@@ -278,9 +313,10 @@ export default function RegistrationForm() {
         setIsSubmitting(true);
 
         try {
+            const competitionId = formData.competitionId.trim();
             const validMembers = getValidMembers();
             await submitPublicRegistration({
-                competitionId: formData.competitionId.trim(),
+                competitionId,
                 teamName: formData.teamName.trim(),
                 referenceCode: formData.referenceCode.trim() || undefined,
                 leaderFullName: formData.leaderName.trim(),
@@ -296,6 +332,7 @@ export default function RegistrationForm() {
                     institution: m.institution?.trim() || undefined,
                 })),
                 paymentScreenshot: formData.paymentScreenshot,
+                isEarlyBird: (latestCompetitionDetail?.earlyBirdLimit ?? 0) > 0,
             });
 
             const successMessage =
@@ -508,8 +545,17 @@ export default function RegistrationForm() {
                                     selectedKeys={
                                         formData.competitionId ? [formData.competitionId] : []
                                     }
+                                    disabledKeys={visibleCompetitions
+                                        .filter((comp) => comp.capacityLimit <= 0)
+                                        .map((comp) => comp.id)}
                                     onSelectionChange={(keys) => {
                                         const value = Array.from(keys)[0] as string;
+                                        if (!value) return;
+                                        const picked = visibleCompetitions.find((comp) => comp.id === value);
+                                        if (picked && picked.capacityLimit <= 0) {
+                                            toast.error("This competition is full. Please select another.");
+                                            return;
+                                        }
                                         updateFormData("competitionId", value);
                                     }}
                                     isDisabled={isLoadingCompetitions || !!competitionError}
@@ -522,30 +568,43 @@ export default function RegistrationForm() {
                                     }}
                                     radius="none"
                                 >
-                                    {visibleCompetitions.map((comp) => (
-                                        <SelectItem
-                                            key={comp.id}
-                                            textValue={`${comp.name} (${comp.category})`}
-                                        >
-                                            <div className="flex flex-col text-left">
-                                                <span className="text-xs md:text-sm font-semibold text-white">
-                                                    {comp.name}
-                                                </span>
-                                                <span className="text-[10px] text-gray-400">
-                                                    {comp.category} • {comp.minTeamSize}–
-                                                    {comp.maxTeamSize} members •{" "}
-                                                    {comp.earlyBirdLimit > 0 ? (
-                                                        <>
-                                                            <span className="text-red-primary line-through">PKR {comp.fee}</span>{" "}
-                                                            <span className="text-white font-semibold">PKR {comp.earlyBirdFee}</span>
-                                                        </>
-                                                    ) : (
-                                                        <>PKR {comp.fee}</>
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
+                                    {visibleCompetitions.map((comp) => {
+                                        const isFull = comp.capacityLimit <= 0;
+
+                                        return (
+                                            <SelectItem
+                                                key={comp.id}
+                                                textValue={`${comp.name} (${comp.category})${isFull ? " — FULL" : ""}`}
+                                            >
+                                                <div className="flex flex-col text-left">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`text-xs md:text-sm font-semibold ${isFull ? "text-gray-500" : "text-white"}`}>
+                                                            {comp.name}
+                                                        </span>
+                                                        {isFull && (
+                                                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 bg-red-primary/20 text-red-primary border border-red-primary/40 uppercase tracking-wider">
+                                                                SEATS_FULL
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] text-gray-400">
+                                                        {comp.category} • {comp.minTeamSize}–
+                                                        {comp.maxTeamSize} members •{" "}
+                                                        {isFull ? (
+                                                            <span className="text-red-primary/70">Registration closed</span>
+                                                        ) : comp.earlyBirdLimit > 0 ? (
+                                                            <>
+                                                                <span className="text-red-primary line-through">PKR {comp.fee}</span>{" "}
+                                                                <span className="text-white font-semibold">PKR {comp.earlyBirdFee}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>PKR {comp.fee}</>
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </SelectItem>
+                                        );
+                                    })}
                                 </Select>
                             </div>
                             <div>
@@ -756,6 +815,31 @@ export default function RegistrationForm() {
                 {/* Payment Tab */}
                 {activeTab === "payment" && (
                     <div className="space-y-8">
+
+                        {/* AMOUNT DUE BANNER */}
+                        <div className="bg-dark-red-1 border border-red-primary/40 p-5 md:p-6 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 h-full w-[6px] bg-red-primary" />
+                            <div className="pl-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div>
+                                    <p className="text-red-primary text-xs font-mono tracking-widest uppercase mb-1">AMOUNT_DUE</p>
+                                    <p className="text-gray-400 text-xs font-mono">
+                                        {isEarlyBirdActive ? "EARLY_BIRD_PRICING_APPLIED" : "STANDARD_PRICING"}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    {isLoadingAmountDue ? (
+                                        <p className="text-gray-500 text-sm font-mono animate-pulse">LOADING...</p>
+                                    ) : amountDue !== null ? (
+                                        <p className="text-white text-2xl md:text-3xl font-bold font-mono">
+                                            PKR <span className="text-red-primary">{amountDue}</span>
+                                        </p>
+                                    ) : (
+                                        <p className="text-gray-500 text-sm font-mono">---</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Upper account information section */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div className="lg:col-span-2 space-y-3">
