@@ -77,6 +77,7 @@ export default function RegistrationForm() {
     const [amountDue, setAmountDue] = useState<number | null>(null);
     const [isLoadingAmountDue, setIsLoadingAmountDue] = useState(false);
     const [isEarlyBirdActive, setIsEarlyBirdActive] = useState(false);
+    const [latestCompetitionDetail, setLatestCompetitionDetail] = useState<CompetitionWithCategory | null>(null);
     const [formData, setFormData] = useState<FormData>({
         teamName: "",
         competitionId: "",
@@ -96,11 +97,14 @@ export default function RegistrationForm() {
         let isMounted = true;
         setIsLoadingAmountDue(true);
         setAmountDue(null);
+        setIsEarlyBirdActive(false);
+        setLatestCompetitionDetail(null);
 
         (async () => {
             try {
                 const comp = await fetchCompetitionById(formData.competitionId);
                 if (!isMounted) return;
+                setLatestCompetitionDetail(comp);
                 const earlyBird = comp.earlyBirdLimit > 0;
                 setIsEarlyBirdActive(earlyBird);
                 setAmountDue(earlyBird ? comp.earlyBirdFee : comp.fee);
@@ -199,6 +203,10 @@ export default function RegistrationForm() {
     const validateTeamTab = (): string | null => {
         if (!formData.teamName.trim()) return "Team name is required.";
         if (!formData.competitionId.trim()) return "Please select a competition.";
+        const picked = competitions.find((comp) => comp.id === formData.competitionId);
+        if (picked && picked.capacityLimit <= 0) {
+            return "This competition is full. Please select another competition.";
+        }
         return null;
     };
 
@@ -305,9 +313,10 @@ export default function RegistrationForm() {
         setIsSubmitting(true);
 
         try {
+            const competitionId = formData.competitionId.trim();
             const validMembers = getValidMembers();
             await submitPublicRegistration({
-                competitionId: formData.competitionId.trim(),
+                competitionId,
                 teamName: formData.teamName.trim(),
                 referenceCode: formData.referenceCode.trim() || undefined,
                 leaderFullName: formData.leaderName.trim(),
@@ -323,7 +332,7 @@ export default function RegistrationForm() {
                     institution: m.institution?.trim() || undefined,
                 })),
                 paymentScreenshot: formData.paymentScreenshot,
-                isEarlyBird: earlyBirdLimit > 0,
+                isEarlyBird: (latestCompetitionDetail?.earlyBirdLimit ?? 0) > 0,
             });
 
             const successMessage =
@@ -536,8 +545,17 @@ export default function RegistrationForm() {
                                     selectedKeys={
                                         formData.competitionId ? [formData.competitionId] : []
                                     }
+                                    disabledKeys={visibleCompetitions
+                                        .filter((comp) => comp.capacityLimit <= 0)
+                                        .map((comp) => comp.id)}
                                     onSelectionChange={(keys) => {
                                         const value = Array.from(keys)[0] as string;
+                                        if (!value) return;
+                                        const picked = visibleCompetitions.find((comp) => comp.id === value);
+                                        if (picked && picked.capacityLimit <= 0) {
+                                            toast.error("This competition is full. Please select another.");
+                                            return;
+                                        }
                                         updateFormData("competitionId", value);
                                     }}
                                     isDisabled={isLoadingCompetitions || !!competitionError}
@@ -550,30 +568,43 @@ export default function RegistrationForm() {
                                     }}
                                     radius="none"
                                 >
-                                    {visibleCompetitions.map((comp) => (
-                                        <SelectItem
-                                            key={comp.id}
-                                            textValue={`${comp.name} (${comp.category})`}
-                                        >
-                                            <div className="flex flex-col text-left">
-                                                <span className="text-xs md:text-sm font-semibold text-white">
-                                                    {comp.name}
-                                                </span>
-                                                <span className="text-[10px] text-gray-400">
-                                                    {comp.category} • {comp.minTeamSize}–
-                                                    {comp.maxTeamSize} members •{" "}
-                                                    {comp.earlyBirdLimit > 0 ? (
-                                                        <>
-                                                            <span className="text-red-primary line-through">PKR {comp.fee}</span>{" "}
-                                                            <span className="text-white font-semibold">PKR {comp.earlyBirdFee}</span>
-                                                        </>
-                                                    ) : (
-                                                        <>PKR {comp.fee}</>
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
+                                    {visibleCompetitions.map((comp) => {
+                                        const isFull = comp.capacityLimit <= 0;
+
+                                        return (
+                                            <SelectItem
+                                                key={comp.id}
+                                                textValue={`${comp.name} (${comp.category})${isFull ? " — FULL" : ""}`}
+                                            >
+                                                <div className="flex flex-col text-left">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`text-xs md:text-sm font-semibold ${isFull ? "text-gray-500" : "text-white"}`}>
+                                                            {comp.name}
+                                                        </span>
+                                                        {isFull && (
+                                                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 bg-red-primary/20 text-red-primary border border-red-primary/40 uppercase tracking-wider">
+                                                                SEATS_FULL
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] text-gray-400">
+                                                        {comp.category} • {comp.minTeamSize}–
+                                                        {comp.maxTeamSize} members •{" "}
+                                                        {isFull ? (
+                                                            <span className="text-red-primary/70">Registration closed</span>
+                                                        ) : comp.earlyBirdLimit > 0 ? (
+                                                            <>
+                                                                <span className="text-red-primary line-through">PKR {comp.fee}</span>{" "}
+                                                                <span className="text-white font-semibold">PKR {comp.earlyBirdFee}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>PKR {comp.fee}</>
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </SelectItem>
+                                        );
+                                    })}
                                 </Select>
                             </div>
                             <div>
