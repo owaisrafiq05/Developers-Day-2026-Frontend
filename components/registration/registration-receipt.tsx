@@ -82,7 +82,7 @@ export default function RegistrationReceipt({
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-0 gap-5">
                 {/* Left Section - Team Info */}
                 <div className="pt-4 pr-0 lg:pr-6">
                     <div className="flex justify-between items-center pb-4 border-b-2  border-[#392828]">
