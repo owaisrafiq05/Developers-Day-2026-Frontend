@@ -56,8 +56,7 @@ export default function InstitutionAutocomplete({
         }
 
         return left.localeCompare(right);
-      })
-      .slice(0, 8);
+      });
   }, [options, normalizedValue]);
 
   const hasExactMatch = options.some(
@@ -108,7 +107,7 @@ export default function InstitutionAutocomplete({
                 <button
                   key={option}
                   type="button"
-                  className="w-full border-b border-gray-900 px-4 py-3 text-left text-sm text-gray-200 transition-colors hover:bg-dark-red hover:text-white"
+                  className="w-full border-b border-gray-900 px-4 py-3 text-left text-sm text-gray-200 transition-colors hover:bg-white/20 hover:text-white focus:bg-white/20 focus:text-white"
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => {
                     onValueChange(option);
