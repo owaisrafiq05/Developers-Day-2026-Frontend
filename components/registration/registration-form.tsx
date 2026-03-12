@@ -418,6 +418,13 @@ export default function RegistrationForm() {
             ? competitions.filter((c) => c.category === selectedCategory)
             : competitions;
 
+    const selectClassNames = {
+        trigger: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
+        value: "text-white",
+        listbox: "bg-dark-red",
+        popoverContent: "bg-dark-red",
+    };
+
     const paymentStatus = formData.paymentScreenshot ? "SUBMITTED" : "NONE";
     const teamMembersCount = getValidMembers().length + 1;
     const selectedCompetition = competitions.find(
@@ -558,13 +565,8 @@ export default function RegistrationForm() {
                                         updateFormData("competitionId", "");
                                     }}
                                     isDisabled={isLoadingCompetitions || !!competitionError}
-                                    classNames={{
-                                        trigger:
-                                            "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                        value: "text-white",
-                                        listbox: "bg-dark-red",
-                                        popoverContent: "bg-dark-red",
-                                    }}
+                                    classNames={selectClassNames}
+                                    scrollShadowProps={{ hideScrollBar: false }}
                                     radius="none"
                                 >
                                     <SelectItem key="" textValue="All categories">
@@ -611,13 +613,8 @@ export default function RegistrationForm() {
                                         updateFormData("competitionId", value);
                                     }}
                                     isDisabled={isLoadingCompetitions || !!competitionError}
-                                    classNames={{
-                                        trigger:
-                                            "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                        value: "text-white",
-                                        listbox: "bg-dark-red",
-                                        popoverContent: "bg-dark-red",
-                                    }}
+                                    classNames={selectClassNames}
+                                    scrollShadowProps={{ hideScrollBar: false }}
                                     radius="none"
                                 >
                                     {visibleCompetitions.map((comp) => {
