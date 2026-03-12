@@ -157,6 +157,8 @@ export const INSTITUTION_OPTIONS = [
   "Abasyn University, Islamabad",
   "Hamdard University, Karachi",
   "Hamdard University, Islamabad",
+  "Institute of Business Administration (IBA), Karachi",
+  "Institute of Business Administration (IBA), Sukkur",
   "National College of Business Administration & Economics, Lahore",
   "National College of Business Administration & Economics, Multan",
   "National College of Business Administration & Economics, Bahawalpur",
