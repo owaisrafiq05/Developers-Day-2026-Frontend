@@ -155,7 +155,7 @@ export const INSTITUTION_OPTIONS = [
   "IQRA University, M‑9 Scheme 33 Karachi",
   "Abasyn University, Peshawar",
   "Abasyn University, Islamabad",
-  "Hamdard University, Karachi",
+  "Hamdard University, Karachi ",
   "Hamdard University, Islamabad",
   "Institute of Business Administration (IBA), Karachi",
   "Institute of Business Administration (IBA), Sukkur",
