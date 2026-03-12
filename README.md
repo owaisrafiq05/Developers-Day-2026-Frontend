@@ -6,6 +6,7 @@ This is a template for creating applications using Next.js 14 (app directory) an
 
 ## Technologies Used
 
+
 - [Next.js 14](https://nextjs.org/docs/getting-started)
 - [HeroUI v2](https://heroui.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
