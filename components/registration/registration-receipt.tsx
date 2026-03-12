@@ -85,30 +85,30 @@ export default function RegistrationReceipt({
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-0 gap-5">
                 {/* Left Section - Team Info */}
                 <div className="pt-4 pr-0 lg:pr-6">
-                    <div className="flex justify-between items-center pb-4 border-b-2  border-[#392828]">
+                    <div className="flex justify-between gap-6 items-center pb-4 border-b-2  border-[#392828]">
                         <span className="text-gray-500 text-sm uppercase">TEAM_NAME</span>
-                        <span className="text-white text-base font-bold uppercase">
+                        <span className="text-white text-base font-bold uppercase text-right pr-2 break-all">
                             {teamName || "---"}
                         </span>
                     </div>
 
-                    <div className="flex justify-between items-center py-4 border-b-2  border-[#392828]">
+                    <div className="flex justify-between gap-6 items-center py-4 border-b-2  border-[#392828]">
                         <span className="text-gray-500 text-sm uppercase">LEADER_NAME</span>
-                        <span className="text-white text-base font-bold uppercase">
+                        <span className="text-white text-base font-bold uppercase text-right pr-2 break-all">
                             {leaderName || "---"}
                         </span>
                     </div>
 
-                    <div className="flex justify-between items-center py-4 border-b-2  border-[#392828]">
+                    <div className="flex justify-between gap-6 items-center py-4 border-b-2  border-[#392828]">
                         <span className="text-gray-500 text-sm uppercase">MODULE_NAME</span>
-                        <span className="text-white text-base font-bold uppercase">
+                        <span className="text-white text-base font-bold uppercase text-right pr-2">
                             {moduleName || "---"}
                         </span>
                     </div>
 
-                    <div className="flex justify-between items-center pt-4">
+                    <div className="flex justify-between gap-6 items-center py-4 border-b-2  border-[#392828]">
                         <span className="text-gray-500 text-sm uppercase">TEAM_MEMBERS</span>
-                        <span className="text-white text-base font-bold">
+                        <span className="text-white text-base font-bold uppercase text-right pr-2">
                             {teamMembers > 0 ? String(teamMembers).padStart(2, "0") : "00"}
                         </span>
                     </div>
@@ -153,15 +153,17 @@ export default function RegistrationReceipt({
                 </div>
             </div>
 
-            {/* Thank You Note (Always visible in capture, always visible on screen) */}
-            <div className="mt-8 pt-6 border-t border-gray-800 text-center">
-                <p className="text-white text-sm md:text-base font-bold tracking-wider mb-2">
-                    THANK_YOU_FOR_REGISTERING FOR DEV_DAY_2026
-                </p>
-                <p className="text-gray-400 text-xs md:text-sm max-w-md mx-auto">
-                    You will receive a confirmation email once your payment is verified. Keep this receipt for your records.
-                </p>
-            </div>
+            {/* Thank You Note */}
+            {onDownloadReceipt && (
+                <div className="mt-8 pt-6 border-t border-gray-800 text-center">
+                    <p className="text-white text-sm md:text-base font-bold tracking-wider mb-2">
+                        THANK_YOU_FOR_REGISTERING FOR DEV_DAY_2026
+                    </p>
+                    <p className="text-gray-400 text-xs md:text-sm max-w-md mx-auto">
+                        You will receive a confirmation email once your payment is verified. Keep this receipt for your records.
+                    </p>
+                </div>
+            )}
 
             {/* Action Buttons */}
             {(onConfirmEntry || onDownloadReceipt) && (

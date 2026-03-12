@@ -37,10 +37,9 @@ export default function SplashScreen({
     <div
       className={`fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-b from-black via-[#140909] to-black
         transition-all duration-900 ease-in-out
-        ${
-          isAnimatingOut
-            ? "opacity-0 scale-95 pointer-events-none"
-            : "opacity-100 scale-100"
+        ${isAnimatingOut
+          ? "opacity-0 scale-95 pointer-events-none"
+          : "opacity-100 scale-100"
         }`}
     >
       {/* Subtle grid + corner glow */}
@@ -126,7 +125,7 @@ export default function SplashScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.5, ease: "easeOut" }}
-          className="flex flex-col items-center gap-2 text-[0.7rem] md:text-xs font-mono tracking-[0.18em] text-gray-400 uppercase"
+          className="flex flex-col items-center gap-2 text-[0.7rem] md:text-xs font-mono tracking-[0.18em] text-gray-400 uppercase text-center px-4"
         >
           <p>INITIALIZING_MODULES // UI_CORE · MAP_ENGINE · MOTION_LAYER</p>
           <div className="relative w-52 md:w-64 h-[2px] bg-white/10 overflow-hidden">

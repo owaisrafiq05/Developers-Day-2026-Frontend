@@ -7,7 +7,7 @@ import { ArrowLeftIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import RegistrationForm from "@/components/registration/registration-form";
 
 // 5:00 PM PKT = UTC+5, so 12:00 UTC on March 12 2026
-const OPEN_AT = new Date("2026-03-12T04:27:00.000Z");
+const OPEN_AT = new Date("2026-03-12T12:00:00.000Z");
 
 function getTimeLeft() {
   const diff = OPEN_AT.getTime() - Date.now();
