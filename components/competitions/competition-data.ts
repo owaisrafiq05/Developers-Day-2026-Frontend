@@ -12,7 +12,7 @@ const competitionData = {
       "earlyBirdPrice": 1550,
       "normalPrice": 1850,
       "teamCount": "3-5 Members",
-      "description": "Synapse X forges tomorrow's business leaders by challenging teams to save Nexus Motors—a legacy  automaker—from EV-era bankruptcy using $60M over  eight quarters."
+      "description": "Synapse X forges tomorrow's business leaders by challenging teams to save Nexus Motors—a legacy automaker—from EV-era bankruptcy using $60M over eight quarters."
     },
     {
       "name": "Dolphin's Tank",
@@ -28,35 +28,35 @@ const competitionData = {
       "earlyBirdPrice": 1350,
       "normalPrice": 1550,
       "teamCount": "2-4 Members",
-      "description": "The team has to design a robot to navigate through a path.The primary objective is to accurately follow and complete the path quickly."
+      "description": "The team has to design a robot to navigate through a path. The primary objective is to accurately follow and complete the path quickly."
     },
     {
       "name": "Robo Soccer (School & College)",
       "earlyBirdPrice": 1350,
       "normalPrice": 1550,
       "teamCount": "2-4 Members",
-      "description": "In this competition the ultimate goal is to secure as many goals as possible.Each team has also defend the goal on its side while score the goal on opposite side."
+      "description": "In this competition, the ultimate goal is to score as many goals as possible. Each team must also defend the goal on its side while scoring on the opposite side."
     },
     {
       "name": "Circuit Design",
       "earlyBirdPrice": 1050,
       "normalPrice": 1250,
       "teamCount": "1-2 Members",
-      "description": "This competition challenges students to design,implement and test a digital circuit using fundamental concepts like logic gates,counters and flip-flops etc"
+      "description": "This competition challenges students to design, implement, and test a digital circuit using fundamental concepts like logic gates, counters, and flip-flops."
     },
     {
       "name": "LFR (University)",
       "earlyBirdPrice": 1350,
       "normalPrice": 1550,
       "teamCount": "2-4 Members",
-      "description": "The team has to design a robot to navigate through a path.The primary objective is to accurately follow and complete the path quickly."
+      "description": "The team has to design a robot to navigate through a path. The primary objective is to accurately follow and complete the path quickly."
     },
     {
       "name": "Robo Soccer (University)",
       "earlyBirdPrice": 1350,
       "normalPrice": 1550,
       "teamCount": "2-4 Members",
-      "description": "In this competition the ultimate goal is to secure as many goals as possible.Each team has also defend the goal on its side while score the goal on opposite side."
+      "description": "In this competition, the ultimate goal is to score as many goals as possible. Each team must also defend the goal on its side while scoring on the opposite side."
     },
     {
       "name": "Robo Sumo",
@@ -192,7 +192,7 @@ const competitionData = {
       "earlyBirdPrice": 2500,
       "normalPrice": 3000,
       "teamCount": "2-4 Members",
-      "description": "A hackathon is a fast-paced competition where innovators, developers, and creators come together to build impactful solutions within a limited time. It’s all about creativity, teamwork, and turning bold ideas into working prototypes"
+      "description": "A hackathon is a fast-paced competition where innovators, developers, and creators come together to build impactful solutions within a limited time. It’s all about creativity, teamwork, and turning bold ideas into working prototypes."
     },
     {
       "name": "Design Arena",
@@ -236,7 +236,7 @@ const competitionData = {
       "earlyBirdPrice": 1250,
       "normalPrice": 1550,
       "teamCount": "1-3 Members",
-      "description": " Predict polymorphic strikes, crack inheritance enigmas, and debug rogue tank battalions.In the final stand, Task Force 141 forges an unbreakable OOP command hierarchy to conquer battlefield chaos."
+      "description": "Predict polymorphic strikes, crack inheritance enigmas, and debug rogue tank battalions. In the final stand, Task Force 141 forges an unbreakable OOP command hierarchy to conquer battlefield chaos."
     }
   ]
 }

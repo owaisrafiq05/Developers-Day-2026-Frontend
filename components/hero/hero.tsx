@@ -99,7 +99,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.55, ease: "easeOut" }}
                 className="text-xs sm:text-base md:text-lg lg:text-xl text-center flex-1" >
-                BRUTE_LOGIC._REFINED_BY DESIGN.
+                BRUTE_LOGIC._REFINED_BY_DESIGN.
               </motion.p>
               <motion.div
                 initial={{ scaleX: 0 }}

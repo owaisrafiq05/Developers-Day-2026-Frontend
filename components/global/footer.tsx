@@ -60,7 +60,7 @@ export default function Footer() {
       href: "https://www.linkedin.com/in/sameed-jamal/",
     },
     {
-      name: "Hasssan Sami",
+      name: "Hassan Sami",
       href: "https://www.linkedin.com/in/hasan-sami/",
     },
     {

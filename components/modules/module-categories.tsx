@@ -51,7 +51,7 @@ export default function ModuleCategories() {
       icon: (
         <Image src="/icons/dev.svg" alt="Build" width={32} height={32} />
       ),
-      title: "DEV & DESGIN",
+      title: "DEV & DESIGN",
       description:
         "Stress-testing structures through adversarial design and deconstruction.",
       code: "C_04",

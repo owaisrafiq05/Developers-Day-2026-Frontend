@@ -76,7 +76,7 @@ export default function EventInfo() {
         </div>
 
         <div className="text-[10px] tracking-[0.12em] text-white/40 uppercase font-mono">
-          Fast_nuces_khi
+          FAST_NUCES_KHI
         </div>
       </div>
 
