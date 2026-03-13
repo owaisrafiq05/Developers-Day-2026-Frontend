@@ -16,6 +16,7 @@ interface RegistrationReceiptProps {
     onConfirmEntry?: () => void;
     onDownloadReceipt?: () => void;
     isSubmitting?: boolean;
+    isConfirmDisabled?: boolean;
 }
 
 export default function RegistrationReceipt({
@@ -30,6 +31,7 @@ export default function RegistrationReceipt({
     onConfirmEntry,
     onDownloadReceipt,
     isSubmitting = false,
+    isConfirmDisabled = false,
 }: RegistrationReceiptProps) {
     const totalFee = moduleFee - discount;
 
@@ -173,7 +175,7 @@ export default function RegistrationReceipt({
                             className="bg-red-primary hover:bg-red-700 text-white font-mono text-sm h-14 uppercase"
                             radius="none"
                             startContent={!isSubmitting ? <CheckCircleIcon className="w-5 h-5" /> : undefined}
-                            isDisabled={!teamName || !leaderName || !moduleName || isSubmitting}
+                            isDisabled={!teamName || !leaderName || !moduleName || isSubmitting || isConfirmDisabled}
                             isLoading={isSubmitting}
                             onPress={onConfirmEntry}
                         >

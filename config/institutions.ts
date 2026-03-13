@@ -5,7 +5,7 @@ export const INSTITUTION_OPTIONS = [
   "National University of Computer and Emerging Sciences (FAST), Lahore",
   "National University of Computer and Emerging Sciences (FAST), Peshawar",
   "National University of Computer and Emerging Sciences (FAST), Chiniot",
-
+  "Habib University, Karachi",
   // Federal/Public Sector Universities
   "COMSATS Institute of Information Technology, Abbottabad",
   "COMSATS Institute of Information Technology, Attock",
@@ -149,10 +149,8 @@ export const INSTITUTION_OPTIONS = [
   "SZABIST, Gharo (Thatta)",
   "ISRA University, Hyderabad",
   "ISRA University, Islamabad",
-  "IQRA University, Karachi (Gulshan Campus)",
-  "IQRA University, Islamabad (H‑9)",
-  "IQRA University, Malir (Airport Road) Karachi",
-  "IQRA University, M‑9 Scheme 33 Karachi",
+  "IQRA University, Karachi",
+  "IQRA University, Islamabad",
   "Abasyn University, Peshawar",
   "Abasyn University, Islamabad",
   "Hamdard University, Karachi ",

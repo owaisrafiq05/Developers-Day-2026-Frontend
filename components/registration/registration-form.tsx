@@ -268,6 +268,33 @@ export default function RegistrationForm() {
         normalizeInstitutionName(member.institution || "") ===
         normalizeInstitutionName(INSTITUTION_OPTIONS[0] || "");
 
+    const getMinAdditionalMembers = (competitionId: string) => {
+        const selectedCompetition = competitions.find((comp) => comp.id === competitionId);
+        if (!selectedCompetition) return 0;
+        return Math.max(selectedCompetition.minTeamSize - 1, 0);
+    };
+
+    useEffect(() => {
+        if (!formData.competitionId || competitions.length === 0) return;
+
+        const minAdditionalMembers = getMinAdditionalMembers(formData.competitionId);
+
+        setFormData((prev) => {
+            if (prev.members.length >= minAdditionalMembers) {
+                return prev;
+            }
+
+            const membersToAdd = minAdditionalMembers - prev.members.length;
+            return {
+                ...prev,
+                members: [
+                    ...prev.members,
+                    ...Array.from({ length: membersToAdd }, () => ({ ...EMPTY_MEMBER })),
+                ],
+            };
+        });
+    }, [formData.competitionId, competitions]);
+
     const addMember = () => {
         const selectedCompetition = competitions.find(
             (comp) => comp.id === formData.competitionId
@@ -295,6 +322,14 @@ export default function RegistrationForm() {
     };
 
     const removeMember = (index: number) => {
+        const minAdditionalMembers = getMinAdditionalMembers(formData.competitionId);
+        if (formData.members.length <= minAdditionalMembers) {
+            const message = `At least ${minAdditionalMembers} member row(s) are required for this competition.`;
+            setSubmitError(message);
+            toast.error(message);
+            return;
+        }
+
         setFormData((prev) => ({
             ...prev,
             members: prev.members.filter((_, i) => i !== index),
@@ -304,7 +339,6 @@ export default function RegistrationForm() {
     const validateTeamTab = (): string | null => {
         if (!formData.teamName.trim()) return "Team name is required.";
         if (!formData.competitionId.trim()) return "Please select a competition.";
-        if (!formData.institutionName.trim()) return "Institution name is required.";
         const picked = competitions.find((comp) => comp.id === formData.competitionId);
         if (picked && picked.capacityLimit <= 0) {
             return "This competition is full. Please select another competition.";
@@ -315,6 +349,7 @@ export default function RegistrationForm() {
     const validateLeaderTab = (): string | null => {
         if (!formData.leaderName.trim()) return "Leader name is required.";
         if (!emailRegex.test(formData.leaderEmail.trim())) return "Please enter a valid leader email.";
+        if (!formData.institutionName.trim()) return "Institution name is required.";
 
         const phone = formData.leaderPhone.trim();
         if (!phoneRegex.test(phone)) {
@@ -523,8 +558,12 @@ export default function RegistrationForm() {
         popoverContent: "bg-dark-red",
     };
 
-    const canViewReceipt = Boolean(formData.paymentScreenshot && turnstileToken);
-    const paymentStatus = canViewReceipt ? "SUBMITTED" : "NONE";
+    const hasPaymentScreenshot = Boolean(formData.paymentScreenshot);
+    const hasTurnstileVerification = Boolean(turnstileToken);
+    const canSubmitFinalEntry = hasPaymentScreenshot && hasTurnstileVerification;
+    const paymentStatus = hasPaymentScreenshot
+        ? (hasTurnstileVerification ? "SUBMITTED" : "PENDING")
+        : "NONE";
     const teamMembersCount = getValidMembers().length + 1;
     const selectedCompetition = competitions.find(
         (comp) => comp.id === formData.competitionId
@@ -788,18 +827,6 @@ export default function RegistrationForm() {
                             </p>
                         )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="text-red-primary text-xs font-mono mb-2 block">05</label>
-                                <InstitutionAutocomplete
-                                    placeholder="INSTITUTION_NAME"
-                                    value={formData.institutionName}
-                                    options={institutionOptions}
-                                    onValueChange={(value) => updateFormData("institutionName", value)}
-                                    onAddOption={addInstitutionOption}
-                                />
-                            </div>
-                        </div>
                     </div>
                 )}
 
@@ -828,8 +855,6 @@ export default function RegistrationForm() {
                                 }}
                                 radius="none"
                             />
-                        </div>
-                        <div className={`grid grid-cols-1 md:grid-cols-2 ${requiresRollNumbers ? "lg:grid-cols-3" : ""} gap-6`}>
                             <Input
                                 placeholder="PHONE_NUMBER"
                                 type="tel"
@@ -857,6 +882,13 @@ export default function RegistrationForm() {
                                     inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
                                 }}
                                 radius="none"
+                            />
+                            <InstitutionAutocomplete
+                                placeholder="INSTITUTION_NAME"
+                                value={formData.institutionName}
+                                options={institutionOptions}
+                                onValueChange={(value) => updateFormData("institutionName", value)}
+                                onAddOption={addInstitutionOption}
                             />
                             {requiresRollNumbers && (
                                 <Input
@@ -919,9 +951,20 @@ export default function RegistrationForm() {
                                         }}
                                         radius="none"
                                     />
-                                </div>
-
-                                <div className={`grid grid-cols-1 md:grid-cols-2 ${memberRequiresRollNumber(member) ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4`}>
+                                    <Input
+                                        placeholder="PHONE (OPTIONAL)"
+                                        value={member.phone || ""}
+                                        type="tel"
+                                        inputMode="numeric"
+                                        onValueChange={(value) =>
+                                            updateMember(index, "phone", formatPhoneInput(value))
+                                        }
+                                        classNames={{
+                                            input: "bg-dark-red text-white placeholder:text-gray-600",
+                                            inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
+                                        }}
+                                        radius="none"
+                                    />
                                     <Input
                                         placeholder="CNIC"
                                         type="text"
@@ -936,19 +979,12 @@ export default function RegistrationForm() {
                                         }}
                                         radius="none"
                                     />
-                                    <Input
-                                        placeholder="PHONE (OPTIONAL)"
-                                        value={member.phone || ""}
-                                        type="tel"
-                                        inputMode="numeric"
-                                        onValueChange={(value) =>
-                                            updateMember(index, "phone", formatPhoneInput(value))
-                                        }
-                                        classNames={{
-                                            input: "bg-dark-red text-white placeholder:text-gray-600",
-                                            inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                        }}
-                                        radius="none"
+                                    <InstitutionAutocomplete
+                                        placeholder="INSTITUTION"
+                                        value={member.institution || ""}
+                                        options={institutionOptions}
+                                        onValueChange={(value) => updateMember(index, "institution", value)}
+                                        onAddOption={addInstitutionOption}
                                     />
                                     {memberRequiresRollNumber(member) && (
                                         <Input
@@ -965,13 +1001,6 @@ export default function RegistrationForm() {
                                             radius="none"
                                         />
                                     )}
-                                    <InstitutionAutocomplete
-                                        placeholder="INSTITUTION"
-                                        value={member.institution || ""}
-                                        options={institutionOptions}
-                                        onValueChange={(value) => updateMember(index, "institution", value)}
-                                        onAddOption={addInstitutionOption}
-                                    />
                                 </div>
                             </div>
                         ))}
@@ -1165,21 +1194,6 @@ export default function RegistrationForm() {
                             const currentIndex = tabs.findIndex((t) => t.id === activeTab);
 
                             if (activeTab === "payment") {
-                                // Validate payment screenshot first
-                                if (!formData.paymentScreenshot) {
-                                    const message = "Please upload the payment screenshot before reviewing.";
-                                    setSubmitError(message);
-                                    toast.error(message);
-                                    return;
-                                }
-
-                                if (!turnstileToken) {
-                                    const message = "Please complete Cloudflare verification before reviewing the receipt.";
-                                    setSubmitError(message);
-                                    toast.error(message);
-                                    return;
-                                }
-
                                 // Scroll to receipt
                                 receiptRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                                 return;
@@ -1224,7 +1238,14 @@ export default function RegistrationForm() {
 
             {/* Registration Receipt */}
             <div ref={receiptRef} className="scroll-mt-8">
-                {canViewReceipt ? (
+                {activeTab === "payment" && !canSubmitFinalEntry ? (
+                    <div className="bg-dark-red-1 border border-gray-800 p-6 md:p-8 font-mono">
+                        <p className="text-red-primary text-xs tracking-widest uppercase mb-2">RECEIPT_LOCKED</p>
+                        <p className="text-gray-300 text-sm md:text-base">
+                            Upload the payment screenshot and complete Cloudflare verification to review your receipt.
+                        </p>
+                    </div>
+                ) : (
                     <RegistrationReceipt
                         teamName={formData.teamName}
                         leaderName={formData.leaderName}
@@ -1236,14 +1257,8 @@ export default function RegistrationForm() {
                         onDownloadRulebook={handleDownloadRulebook}
                         onConfirmEntry={handleSubmit}
                         isSubmitting={isSubmitting}
+                        isConfirmDisabled={!canSubmitFinalEntry}
                     />
-                ) : (
-                    <div className="bg-dark-red-1 border border-gray-800 p-6 md:p-8 font-mono">
-                        <p className="text-red-primary text-xs tracking-widest uppercase mb-2">RECEIPT_LOCKED</p>
-                        <p className="text-gray-300 text-sm md:text-base">
-                            Upload the payment screenshot and complete Cloudflare verification to review your receipt.
-                        </p>
-                    </div>
                 )}
             </div>
         </div>

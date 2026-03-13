@@ -28,6 +28,24 @@ function getInstitutionScore(option: string, query: string): number {
   return 1000;
 }
 
+const INSTITUTION_PRIORITY: string[] = [
+  "National University of Computer and Emerging Sciences (FAST), Karachi",
+  "Institute of Business Administration (IBA), Karachi",
+  "NED University of Engineering & Technology, Karachi",
+  "Habib University, Karachi",
+];
+
+const INSTITUTION_PRIORITY_RANK = new Map(
+  INSTITUTION_PRIORITY.map((institution, index) => [
+    normalizeInstitution(institution),
+    index,
+  ])
+);
+
+function getPriorityRank(option: string): number {
+  return INSTITUTION_PRIORITY_RANK.get(normalizeInstitution(option)) ?? Number.MAX_SAFE_INTEGER;
+}
+
 export default function InstitutionAutocomplete({
   placeholder,
   value,
@@ -53,6 +71,13 @@ export default function InstitutionAutocomplete({
 
         if (leftScore !== rightScore) {
           return leftScore - rightScore;
+        }
+
+        const leftPriority = getPriorityRank(left);
+        const rightPriority = getPriorityRank(right);
+
+        if (leftPriority !== rightPriority) {
+          return leftPriority - rightPriority;
         }
 
         return left.localeCompare(right);
