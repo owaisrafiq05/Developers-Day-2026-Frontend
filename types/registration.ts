@@ -11,6 +11,7 @@ export interface PublicRegistrationRequest {
   competitionId: string;
   teamName: string;
   referenceCode?: string;
+  turnstileToken: string;
   leaderFullName: string;
   leaderEmail: string;
   leaderCnic: string;

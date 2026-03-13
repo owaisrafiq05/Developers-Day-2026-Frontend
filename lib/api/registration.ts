@@ -25,6 +25,7 @@ export async function submitPublicRegistration(
 
   formData.append("competitionId", payload.competitionId);
   formData.append("teamName", payload.teamName);
+  formData.append("turnstileToken", payload.turnstileToken);
 
   if (payload.referenceCode) {
     formData.append("referenceCode", payload.referenceCode);
