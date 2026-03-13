@@ -24,6 +24,7 @@ declare global {
                 sitekey: string;
                 theme?: "light" | "dark" | "auto";
                 action?: string;
+                size?: "normal" | "compact" | "flexible";
                 callback?: (token: string) => void;
                 "expired-callback"?: () => void;
                 "error-callback"?: (errorCode?: string) => void;
@@ -177,6 +178,12 @@ export default function RegistrationForm() {
     }, []);
 
     useEffect(() => {
+        if (typeof window !== "undefined" && window.turnstile) {
+            setIsTurnstileScriptReady(true);
+        }
+    }, [activeTab]);
+
+    useEffect(() => {
         if (activeTab !== "payment") {
             return;
         }
@@ -192,12 +199,11 @@ export default function RegistrationForm() {
             return;
         }
 
-        turnstileWidgetIdRef.current = null;
-
         const widgetId = window.turnstile.render(turnstileContainerRef.current, {
             sitekey: turnstileSiteKey,
             theme: "dark",
             action: "public_registration",
+            size: "normal",
             callback: (token: string) => {
                 setTurnstileToken(token);
                 setSubmitError(null);
@@ -585,6 +591,12 @@ export default function RegistrationForm() {
 
     return (
         <div className="space-y-8">
+            <Script
+                src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+                strategy="afterInteractive"
+                onLoad={() => setIsTurnstileScriptReady(true)}
+            />
+
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 mb-8">
                 {tabs.map((tab) => {
                     const active = activeTab === tab.id
@@ -988,12 +1000,6 @@ export default function RegistrationForm() {
                 {activeTab === "payment" && (
                     <div className="space-y-8">
 
-                        <Script
-                            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-                            strategy="afterInteractive"
-                            onLoad={() => setIsTurnstileScriptReady(true)}
-                        />
-
                         {/* AMOUNT DUE BANNER */}
                         <div className="bg-dark-red-1 border border-red-primary/40 p-5 md:p-6 relative overflow-hidden">
                             <div className="absolute top-0 left-0 h-full w-[6px] bg-red-primary" />
@@ -1111,7 +1117,7 @@ export default function RegistrationForm() {
                                 </ul>
                             </div>
 
-                            <div className="bg-dark-red border border-gray-800 p-4 md:p-5 space-y-3">
+                            <div className="bg-dark-red border border-gray-800 p-2.5 sm:p-4 md:p-5 space-y-3">
                                 <p className="text-red-primary text-xs font-mono tracking-widest uppercase">
                                     02 // CLOUDFLARE_VERIFICATION
                                 </p>
@@ -1124,12 +1130,13 @@ export default function RegistrationForm() {
                                         <p className="text-gray-400 text-xs md:text-sm">
                                             Complete this verification before final submission.
                                         </p>
-                                        <div ref={turnstileContainerRef} className="min-h-[70px]" />
-                                        {turnstileToken ? (
-                                            <p className="text-green-400 text-xs font-mono">VERIFIED</p>
-                                        ) : (
-                                            <p className="text-yellow-300 text-xs font-mono">PENDING_VERIFICATION</p>
-                                        )}
+                                        <div className="w-full overflow-x-auto sm:overflow-hidden">
+                                            <div
+                                                ref={turnstileContainerRef}
+                                                className="min-h-[66px] w-[300px] max-w-full"
+                                            />
+                                        </div>
+                                        
                                     </>
                                 )}
                             </div>

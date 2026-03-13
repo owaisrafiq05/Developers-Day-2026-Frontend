@@ -9,6 +9,7 @@
 @theme {
     --font-sans: "font", sans-serif;
     --font-mono: "monospace", monospace;
+    --breakpoint-xs: 400px;
 }
 
 /* Color Palette Variables */
