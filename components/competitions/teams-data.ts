@@ -45,10 +45,9 @@ const teamsData = {
 
     "general": [
         { name: "TDM", "teamMembers": "Duaa Siraj ● Wassaf ● Zulfiqar" },
-        { name: "Scavenger", "teamMembers": "Amber ● Ibrahim ● Muhammad Taha Ahmed Siddiqui" },
-        { name: "CSI", "teamMembers": "Shahzaib Raza ● Saad ● Roshni" },
+        { name: "Scavenger Hunt", "teamMembers": "Shehryar Rafiq ●  Amber ● Ibrahim ● Muhammad Taha Ahmed Siddiqui" },
+        { name: "CSI", "teamMembers": "Shahzaib Raza ● Saad ● Roshni ● Osailah Atif" },
         { name: "Trump", "teamMembers": "Myer Kamran ● Waleed" },
-        { name: "Zorb Ball", "teamMembers": "Shehryar Rafiq ● Osailah Atif" },
         { name: "Rage Room", "teamMembers": "Asra Fadoo ● Syed Aazmir Hussain" },
         { name: "Karaoke", "teamMembers": "Asra Fadoo ● Ayra Omar" },
         { name: "Chess", "teamMembers": "Musbah Rashid ● Aouf" }

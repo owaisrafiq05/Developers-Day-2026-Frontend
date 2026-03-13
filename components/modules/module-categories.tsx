@@ -71,7 +71,7 @@ export default function ModuleCategories() {
       icon: <Image src="/icons/general.svg" alt="AI" width={32} height={32} />,
       title: "GENERAL",
       description:
-        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+        "Unwind in a fun series of interactive challenges and shared experiences.",
       code: "C_06",
       url: "/modules/general",
     },
@@ -80,7 +80,7 @@ export default function ModuleCategories() {
       icon: <Image src="/icons/electrical.svg" alt="AI" width={32} height={32} />,
       title: "ELECTRICAL ENGINEERING",
       description:
-        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+        "Robotics, embedded control systems, and circuit-driven machines competing in engineering challenges.",
       code: "C_07",
       url: "/modules/electrical-eng",
     },
@@ -89,7 +89,7 @@ export default function ModuleCategories() {
       icon: <Image src="/icons/business.svg" alt="AI" width={32} height={32} />,
       title: "BUSINESS",
       description:
-        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+      "Strategic thinking and entrepreneurial innovation through startup pitches, investment ideas, and business case challenges.",
       code: "C_08",
       url: "/modules/business",
     },
