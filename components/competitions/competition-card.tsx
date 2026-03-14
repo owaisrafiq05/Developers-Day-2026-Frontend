@@ -2,7 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
-import { UserGroupIcon, BanknotesIcon } from "@heroicons/react/24/solid";
+import { UserGroupIcon, BanknotesIcon, CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
 
 export interface CompetitionCardProps {
@@ -10,6 +10,8 @@ export interface CompetitionCardProps {
   description: string;
   minTeamSize: number;
   maxTeamSize: number;
+  startTime?: string | null;
+  endTime?: string | null;
   capacityLimit: number;
   earlyBirdLimit: number;
   earlyBirdPrice: number;
@@ -22,12 +24,88 @@ export default function CompetitionCard({
   description,
   minTeamSize,
   maxTeamSize,
+  startTime,
+  endTime,
   earlyBirdLimit,
   earlyBirdPrice,
   capacityLimit,
   normalPrice,
   registerHref = "/register",
 }: CompetitionCardProps) {
+  const parseBackendDateTimeParts = (value?: string | null) => {
+    if (!value) return null;
+
+    const match = value.trim().match(
+      /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})(?::(\d{2}))?/
+    );
+
+    if (!match) return null;
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const hour = Number(match[4]);
+    const minute = Number(match[5]);
+
+    if (
+      year <= 0 ||
+      month < 1 ||
+      month > 12 ||
+      day < 1 ||
+      day > 31 ||
+      hour < 0 ||
+      hour > 23 ||
+      minute < 0 ||
+      minute > 59
+    ) {
+      return null;
+    }
+
+    return { year, month, day, hour, minute };
+  };
+
+  const formatTime12Hour = (hour: number, minute: number): string => {
+    const suffix = hour >= 12 ? "PM" : "AM";
+    const normalizedHour = hour % 12 || 12;
+    return `${normalizedHour}:${String(minute).padStart(2, "0")} ${suffix}`;
+  };
+
+  const formatSchedule = (start?: string | null, end?: string | null): string => {
+    const startParts = parseBackendDateTimeParts(start);
+    const endParts = parseBackendDateTimeParts(end);
+    const dateRef = startParts || endParts;
+
+    if (!dateRef) {
+      return "Schedule TBA";
+    }
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const date = `${String(dateRef.day).padStart(2, "0")} ${monthNames[dateRef.month - 1]} ${dateRef.year}`;
+    const startLabel = startParts ? formatTime12Hour(startParts.hour, startParts.minute) : null;
+    const endLabel = endParts ? formatTime12Hour(endParts.hour, endParts.minute) : null;
+
+    if (startLabel && endLabel) {
+      return `${date} • ${startLabel} - ${endLabel}`;
+    }
+
+    return `${date} • ${startLabel || endLabel}`;
+  };
+
+  const scheduleLabel = formatSchedule(startTime, endTime);
+
   return (
     <motion.div
       className="flex flex-col h-full overflow-hidden bg-[#111214] border-[0.25px] border-[#333333]"
@@ -71,6 +149,11 @@ export default function CompetitionCard({
                 <span className="text-white">PKR {normalPrice}</span>
               </>
             }
+          </div>
+
+          <div className="bg-[#1A1A1A] p-3 w-full border border-[#FFFFFF0D] border-l-2 border-l-[var(--color,#2563EB)] flex flex-col items-baseline gap-2">
+            <CalendarDaysIcon className="w-4 h-4 text-[var(--color,#2563EB)]" />
+            <span className="text-white text-sm">{scheduleLabel}</span>
           </div>
 
           {/* Register Button */}

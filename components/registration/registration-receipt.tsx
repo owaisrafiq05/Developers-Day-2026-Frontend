@@ -8,6 +8,8 @@ interface RegistrationReceiptProps {
     teamName?: string;
     leaderName?: string;
     moduleName?: string;
+    moduleStartTime?: string | null;
+    moduleEndTime?: string | null;
     teamMembers?: number;
     moduleFee?: number;
     discount?: number;
@@ -23,6 +25,8 @@ export default function RegistrationReceipt({
     teamName = "",
     leaderName = "",
     moduleName = "",
+    moduleStartTime = null,
+    moduleEndTime = null,
     teamMembers = 0,
     moduleFee = 2500,
     discount = 0,
@@ -33,6 +37,80 @@ export default function RegistrationReceipt({
     isSubmitting = false,
     isConfirmDisabled = false,
 }: RegistrationReceiptProps) {
+    type ParsedDateTimeParts = {
+        year: number;
+        month: number;
+        day: number;
+        hour: number;
+        minute: number;
+        second: number;
+    };
+
+    const parseBackendDateTimeParts = (value?: string | null): ParsedDateTimeParts | null => {
+        if (!value) return null;
+
+        const normalizedValue = value.trim();
+        const match = normalizedValue.match(
+            /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})(?::(\d{2}))?/
+        );
+
+        if (!match) {
+            return null;
+        }
+
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+        const hour = Number(match[4]);
+        const minute = Number(match[5]);
+        const second = Number(match[6] || "0");
+
+        const isValidDate =
+            year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= 31;
+        const isValidTime =
+            hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59 && second >= 0 && second <= 59;
+
+        if (!isValidDate || !isValidTime) {
+            return null;
+        }
+
+        return { year, month, day, hour, minute, second };
+    };
+
+    const formatTime12Hour = (hour: number, minute: number): string => {
+        const suffix = hour >= 12 ? "PM" : "AM";
+        const normalizedHour = hour % 12 || 12;
+        return `${normalizedHour}:${String(minute).padStart(2, "0")} ${suffix}`;
+    };
+
+    const formatModuleReservation = (start?: string | null, end?: string | null): string => {
+        const startParts = parseBackendDateTimeParts(start);
+        const endParts = parseBackendDateTimeParts(end);
+
+        if (!startParts && !endParts) {
+            return "--/--/---- // --:-- -- PST";
+        }
+
+        const baseDate = startParts || endParts;
+        if (!baseDate) {
+            return "--/--/---- // --:-- -- PST";
+        }
+
+        const date = `${String(baseDate.day).padStart(2, "0")}-${String(baseDate.month).padStart(2, "0")}-${baseDate.year}`;
+        const startTime = startParts
+            ? formatTime12Hour(startParts.hour, startParts.minute)
+            : null;
+        const endTime = endParts
+            ? formatTime12Hour(endParts.hour, endParts.minute)
+            : null;
+
+        if (startTime && endTime) {
+            return `${date} // ${startTime} - ${endTime} PST`;
+        }
+
+        return `${date} // ${(startTime || endTime)} PST`;
+    };
+
     const totalFee = moduleFee - discount;
 
     const [timestamp, setTimestamp] = useState<{
@@ -80,7 +158,7 @@ export default function RegistrationReceipt({
                     Timestamp: {timestamp.date} // {timestamp.time} PST
                 </p>
                 <p className="text-red-primary text-xs md:text-sm">
-                    Module_Date_Reserved: 16-04-2025 // 9:00:00 AM PST
+                    Module_Date_Reserved: {formatModuleReservation(moduleStartTime, moduleEndTime)}
                 </p>
             </div>
 

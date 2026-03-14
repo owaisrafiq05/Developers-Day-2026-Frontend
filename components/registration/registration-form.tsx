@@ -616,6 +616,8 @@ export default function RegistrationForm() {
                         teamName={formData.teamName}
                         leaderName={formData.leaderName}
                         moduleName={selectedCompetition?.name}
+                        moduleStartTime={selectedCompetition?.startTime}
+                        moduleEndTime={selectedCompetition?.endTime}
                         teamMembers={teamMembersCount}
                         moduleFee={normalFee}
                         discount={discountApplied}
@@ -773,7 +775,7 @@ export default function RegistrationForm() {
                                         return (
                                             <SelectItem
                                                 key={comp.id}
-                                                textValue={`${comp.name} (${comp.category})${isFull ? " — FULL" : ""}`}
+                                                textValue={`${comp.name}${isFull ? " — FULL" : ""}`}
                                             >
                                                 <div className="flex flex-col text-left">
                                                     <div className="flex items-center gap-2">
@@ -1250,6 +1252,8 @@ export default function RegistrationForm() {
                         teamName={formData.teamName}
                         leaderName={formData.leaderName}
                         moduleName={selectedCompetition?.name}
+                        moduleStartTime={selectedCompetition?.startTime}
+                        moduleEndTime={selectedCompetition?.endTime}
                         teamMembers={teamMembersCount}
                         moduleFee={normalFee}
                         discount={discountApplied}

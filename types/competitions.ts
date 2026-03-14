@@ -9,5 +9,7 @@ export interface CompetitionWithCategory {
   earlyBirdLimit: number;
   minTeamSize: number;
   maxTeamSize: number;
+  startTime?: string | null;
+  endTime?: string | null;
 }
 

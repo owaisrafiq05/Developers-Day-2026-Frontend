@@ -17,6 +17,8 @@ type Competition = {
   earlyBirdFee: number;
   minTeamSize: number;
   maxTeamSize: number;
+  startTime?: string | null;
+  endTime?: string | null;
 };
 
 /* ── animation variants ── */
@@ -151,6 +153,8 @@ export default function ModuleCompetitions({
                 description={comp.description}
                 minTeamSize={comp.minTeamSize}
                 maxTeamSize={comp.maxTeamSize}
+                startTime={comp.startTime}
+                endTime={comp.endTime}
                 capacityLimit={comp.capacityLimit}
                 earlyBirdLimit={comp.earlyBirdLimit}
                 earlyBirdPrice={comp.earlyBirdFee}
