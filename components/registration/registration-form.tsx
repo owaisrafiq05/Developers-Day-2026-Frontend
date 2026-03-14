@@ -473,15 +473,16 @@ export default function RegistrationForm() {
                 const participantName = firstConflict.participant.fullName;
                 const competitionName = firstConflict.competition.name;
                 toast.warning(
-                    `Warning: ${participantName} is already registered for ${competitionName} at a conflicting time.`
+                    `Warning: ${participantName} is already registered for ${competitionName} at a clashing time.`,
+                    { duration: 10000 }
                 );
             } else {
-                toast.success("No scheduling conflicts found.");
+                toast.success("No schedule clashes found.");
             }
         } catch (error: any) {
             const message =
                 error?.message ||
-                "Could not verify schedule conflicts. Please try again later.";
+                "Could not verify schedule clashes. Please try again later.";
             toast.error(message);
         } finally {
             setIsCheckingConflicts(false);
@@ -1088,7 +1089,7 @@ export default function RegistrationForm() {
                                 isDisabled={isCheckingConflicts}
                                 isLoading={isCheckingConflicts}
                             >
-                                {isCheckingConflicts ? "CHECKING..." : "CHECK CONFLICTS →"}
+                                {isCheckingConflicts ? "CHECKING CLASHES..." : "CHECK CLASHES →"}
                             </Button>
                         </div>
                     </div>
