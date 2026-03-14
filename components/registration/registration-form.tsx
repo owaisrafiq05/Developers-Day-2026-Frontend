@@ -40,6 +40,17 @@ declare global {
 
 type TabType = "team" | "leader" | "members" | "payment";
 
+const MODULE_CATEGORY_ORDER = [
+    "Core Coding",
+    "Software Engineering",
+    "Tech Quest",
+    "Development & Design",
+    "AI & Data Science",
+    "General",
+    "Electrical Engineering",
+    "Business",
+];
+
 interface FormData {
     teamName: string;
     competitionId: string;
@@ -600,7 +611,24 @@ export default function RegistrationForm() {
 
     const categories = Array.from(
         new Set(competitions.map((c) => c.category))
-    ).sort();
+    ).sort((a, b) => {
+        const indexA = MODULE_CATEGORY_ORDER.indexOf(a);
+        const indexB = MODULE_CATEGORY_ORDER.indexOf(b);
+
+        if (indexA === -1 && indexB === -1) {
+            return a.localeCompare(b);
+        }
+
+        if (indexA === -1) {
+            return 1;
+        }
+
+        if (indexB === -1) {
+            return -1;
+        }
+
+        return indexA - indexB;
+    });
 
     const visibleCompetitions =
         selectedCategory && categories.includes(selectedCategory)
