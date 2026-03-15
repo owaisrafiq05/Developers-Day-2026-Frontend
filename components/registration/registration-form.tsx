@@ -387,7 +387,6 @@ export default function RegistrationForm() {
 
     const validateTeamTab = (): string | null => {
         if (!formData.teamName.trim()) return "Team name is required.";
-        if (!formData.institutionName.trim()) return "Institution name is required.";
         if (!formData.competitionId.trim()) return "Please select a competition.";
         const picked = competitions.find((comp) => comp.id === formData.competitionId);
         if (picked && picked.capacityLimit <= 0) {
@@ -398,6 +397,7 @@ export default function RegistrationForm() {
 
     const validateLeaderTab = (): string | null => {
         if (!formData.leaderName.trim()) return "Leader name is required.";
+        if (!formData.institutionName.trim()) return "Institution name is required.";
         if (!emailRegex.test(formData.leaderEmail.trim())) return "Please enter a valid leader email.";
 
         const phone = formData.leaderPhone.trim();
@@ -1003,6 +1003,17 @@ export default function RegistrationForm() {
                                 }}
                                 radius="none"
                             />
+                            <div>
+                                <InstitutionAutocomplete
+                                    placeholder="INSTITUTION_NAME"
+                                    value={formData.institutionName}
+                                    onValueChange={(value) => updateFormData("institutionName", value)}
+                                    options={institutionOptions}
+                                    onAddOption={(newOption) => {
+                                        setInstitutionOptions([...institutionOptions, newOption]);
+                                    }}
+                                />
+                            </div>
                             {requiresRollNumbers && (
                                 <Input
                                     placeholder="ROLL_NUMBER (e.g. 22K4581)"
