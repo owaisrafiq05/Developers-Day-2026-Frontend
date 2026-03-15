@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
+import Script from "next/script";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
@@ -60,6 +61,20 @@ export default function RootLayout({
             </SmoothScroll>
           </Providers>
         </SplashProvider>
+
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-PH32J132S7" strategy="afterInteractive" />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-PH32J132S7');
+            `,
+          }}
+        />
       </body>
     </html>
   );
