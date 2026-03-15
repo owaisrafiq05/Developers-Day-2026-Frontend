@@ -41,11 +41,11 @@ declare global {
 type TabType = "team" | "leader" | "members" | "payment";
 
 const MODULE_CATEGORY_ORDER = [
-    "Core Coding",
-    "Software Engineering",
     "Tech Quest",
-    "Development & Design",
+    "Software Engineering",
     "AI & Data Science",
+    "Development & Design",
+    "Core Coding",
     "General",
     "Electrical Engineering",
     "Business",
@@ -397,8 +397,8 @@ export default function RegistrationForm() {
 
     const validateLeaderTab = (): string | null => {
         if (!formData.leaderName.trim()) return "Leader name is required.";
-        if (!emailRegex.test(formData.leaderEmail.trim())) return "Please enter a valid leader email.";
         if (!formData.institutionName.trim()) return "Institution name is required.";
+        if (!emailRegex.test(formData.leaderEmail.trim())) return "Please enter a valid leader email.";
 
         const phone = formData.leaderPhone.trim();
         if (!phoneRegex.test(phone)) {
@@ -818,9 +818,25 @@ export default function RegistrationForm() {
                                 />
                             </div>
                             <div>
-                                <label className="text-red-primary text-xs font-mono mb-2 block">02</label>
+                                <label className="text-red-primary text-xs font-mono mb-2 block">02 (OPTIONAL)</label>
+                                <Input
+                                    placeholder="REFERENCE_CODE"
+                                    value={formData.referenceCode}
+                                    onValueChange={(value) => updateFormData("referenceCode", value)}
+                                    classNames={{
+                                        input: "bg-dark-red text-white placeholder:text-gray-600 text-xs",
+                                        inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
+                                    }}
+                                    radius="none"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="text-red-primary text-xs font-mono mb-2 block">03</label>
                                 <Select
-                                    placeholder="FILTER_BY_CATEGORY"
+                                    placeholder="MODULE_CATEGORY"
                                     selectedKeys={selectedCategory ? [selectedCategory] : []}
                                     onSelectionChange={(keys) => {
                                         const value = (Array.from(keys)[0] as string) || "";
@@ -852,16 +868,13 @@ export default function RegistrationForm() {
                                     }
                                 </Select>
                             </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="text-red-primary text-xs font-mono mb-2 block">03</label>
+                                <label className="text-red-primary text-xs font-mono mb-2 block">04</label>
                                 <Select
                                     placeholder={
                                         isLoadingCompetitions
                                             ? "Loading competitions..."
-                                            : "SELECT_COMPETITION"
+                                            : "MODULE_NAME"
                                     }
                                     selectedKeys={
                                         formData.competitionId ? [formData.competitionId] : []
@@ -925,19 +938,6 @@ export default function RegistrationForm() {
                                         );
                                     })}
                                 </Select>
-                            </div>
-                            <div>
-                                <label className="text-red-primary text-xs font-mono mb-2 block">04 (OPTIONAL)</label>
-                                <Input
-                                    placeholder="REFERENCE_CODE"
-                                    value={formData.referenceCode}
-                                    onValueChange={(value) => updateFormData("referenceCode", value)}
-                                    classNames={{
-                                        input: "bg-dark-red text-white placeholder:text-gray-600",
-                                        inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                    }}
-                                    radius="none"
-                                />
                             </div>
                         </div>
 
@@ -1003,13 +1003,17 @@ export default function RegistrationForm() {
                                 }}
                                 radius="none"
                             />
-                            <InstitutionAutocomplete
-                                placeholder="INSTITUTION_NAME"
-                                value={formData.institutionName}
-                                options={institutionOptions}
-                                onValueChange={(value) => updateFormData("institutionName", value)}
-                                onAddOption={addInstitutionOption}
-                            />
+                            <div>
+                                <InstitutionAutocomplete
+                                    placeholder="INSTITUTION_NAME"
+                                    value={formData.institutionName}
+                                    onValueChange={(value) => updateFormData("institutionName", value)}
+                                    options={institutionOptions}
+                                    onAddOption={(newOption) => {
+                                        setInstitutionOptions([...institutionOptions, newOption]);
+                                    }}
+                                />
+                            </div>
                             {requiresRollNumbers && (
                                 <Input
                                     placeholder="ROLL_NUMBER (e.g. 22K4581)"

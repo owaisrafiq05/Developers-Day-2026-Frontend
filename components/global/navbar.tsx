@@ -33,11 +33,11 @@ import Image from "next/image";
 import { LayoutGroup, motion, AnimatePresence } from "framer-motion";
 
 const modules = [
-  { id: "coding",        label: "Coding",          icon: CodeBracketIcon },
-  { id: "software-eng",  label: "Software Eng",    icon: CommandLineIcon },
   { id: "tech-quest",    label: "Tech Quest",      icon: CpuChipIcon },
-  { id: "dev-design",    label: "Dev & Design",      icon: ComputerDesktopIcon },
+  { id: "software-eng",  label: "Software Eng",    icon: CommandLineIcon },
   { id: "ai-data",       label: "AI & Data",       icon: CircleStackIcon },
+  { id: "dev-design",    label: "Dev & Design",    icon: ComputerDesktopIcon },
+  { id: "coding",        label: "Coding",          icon: CodeBracketIcon },
   { id: "general",       label: "General",         icon: FlagIcon },
   { id: "electrical-eng",label: "Electrical Eng",  icon: BoltIcon },
   { id: "business",      label: "Business",        icon: PresentationChartBarIcon },

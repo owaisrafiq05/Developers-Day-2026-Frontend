@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Metadata } from "next";
 import ModuleCompetitions from "@/components/competitions/module-competitions";
 import { RegistrationBanner } from "@/components/registration";
 import ModuleNotFound from "@/components/competitions/module-not-found";
@@ -95,6 +96,99 @@ const modules = [
     },
 ];
 
+function formatModuleTitle(rawTitle: string) {
+    return rawTitle.replace(/_/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function buildModuleJsonLd(moduleId: string, moduleTitle: string, moduleDescription: string) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.devday26.com";
+    const moduleUrl = `${siteUrl}/modules/${moduleId}`;
+
+    return {
+        breadcrumb: {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+                {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Home",
+                    item: siteUrl,
+                },
+                {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Modules",
+                    item: `${siteUrl}/modules`,
+                },
+                {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: moduleTitle,
+                    item: moduleUrl,
+                },
+            ],
+        },
+        collection: {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `${moduleTitle} Competitions`,
+            description: moduleDescription,
+            url: moduleUrl,
+            isPartOf: {
+                "@type": "WebSite",
+                name: "Developer's Day 2026",
+                url: siteUrl,
+            },
+        },
+    };
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+    const { id } = await params;
+    const selectedModule = modules.find((m) => m.id === id);
+
+    if (!selectedModule) {
+        return {
+            title: "Module Not Found",
+            description: "The requested competition module could not be found.",
+            robots: {
+                index: false,
+                follow: false,
+            },
+        };
+    }
+
+    const moduleTitle = formatModuleTitle(selectedModule.title);
+    const title = `${moduleTitle} | Developer's Day 2026`;
+    const description = `${moduleTitle} competitions at Developer's Day 2026. ${selectedModule.categoryDescription[0]}`;
+    const canonicalPath = `/modules/${selectedModule.id}`;
+
+    return {
+        title,
+        description,
+        alternates: {
+            canonical: canonicalPath,
+        },
+        openGraph: {
+            title,
+            description,
+            url: canonicalPath,
+            images: [{ url: "/logo-1.png", alt: `${moduleTitle} competitions` }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: ["/logo-1.png"],
+        },
+    };
+}
+
 async function getCompetitions() {
     try {
         const res = await fetch(
@@ -139,6 +233,10 @@ export default async function ModulePage({
         );
     }
 
+    const moduleTitle = formatModuleTitle(selectedModule.title);
+    const moduleDescription = `${moduleTitle} competitions at Developer's Day 2026. ${selectedModule.categoryDescription[0]}`;
+    const moduleJsonLd = buildModuleJsonLd(moduleId, moduleTitle, moduleDescription);
+
     const competitions = await getCompetitions();
     const category = idToCategoryMap[moduleId];
     const categoryCompetitions = competitions.filter(
@@ -146,6 +244,14 @@ export default async function ModulePage({
     );
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(moduleJsonLd.breadcrumb) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(moduleJsonLd.collection) }}
+            />
             <ModuleCompetitions {...selectedModule} categoryCompetitions={categoryCompetitions} />
             <RegistrationBanner />
         </>
