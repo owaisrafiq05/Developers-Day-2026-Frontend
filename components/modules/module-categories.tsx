@@ -9,15 +9,15 @@ import { motion } from "framer-motion";
 export default function ModuleCategories() {
   const modules = [
     {
-      id: "coding-competitions",
+      id: "tech-quest",
       icon: (
-        <Image src="/icons/coding.svg" alt="Coding" width={32} height={32} />
+        <Image src="/icons/tech.svg" alt="Tech" width={32} height={32} />
       ),
-      title: "CORE CODING",
+      title: "TECH QUEST",
       description:
-        "Solve algorithmic challenges and compete in real-time coding competitions.",
+        "Exploration and tech testing platform digital innovations.",
       code: "C_01",
-      url: "/modules/coding",
+      url: "/modules/tech-quest",
     },
     {
       id: "software-engineering",
@@ -36,15 +36,13 @@ export default function ModuleCategories() {
       url: "/modules/software-eng",
     },
     {
-      id: "tech-quest",
-      icon: (
-        <Image src="/icons/tech.svg" alt="Tech" width={32} height={32} />
-      ),
-      title: "TECH QUEST",
+      id: "ai-data",
+      icon: <Image src="/icons/ai.svg" alt="AI" width={32} height={32} />,
+      title: "AI & DATA SCIENCE",
       description:
-        "Exploration and tech testing platform digital innovations.",
+        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
       code: "C_03",
-      url: "/modules/tech-quest",
+      url: "/modules/ai-data",
     },
     {
       id: "dev-design",
@@ -58,13 +56,15 @@ export default function ModuleCategories() {
       url: "/modules/dev-design",
     },
     {
-      id: "ai-data",
-      icon: <Image src="/icons/ai.svg" alt="AI" width={32} height={32} />,
-      title: "AI & DATA SCIENCE",
+      id: "coding-competitions",
+      icon: (
+        <Image src="/icons/coding.svg" alt="Coding" width={32} height={32} />
+      ),
+      title: "CORE CODING",
       description:
-        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+        "Solve algorithmic challenges and compete in real-time coding competitions.",
       code: "C_05",
-      url: "/modules/ai-data",
+      url: "/modules/coding",
     },
     {
       id: "general",

@@ -41,11 +41,11 @@ declare global {
 type TabType = "team" | "leader" | "members" | "payment";
 
 const MODULE_CATEGORY_ORDER = [
-    "Core Coding",
-    "Software Engineering",
     "Tech Quest",
-    "Development & Design",
+    "Software Engineering",
     "AI & Data Science",
+    "Development & Design",
+    "Core Coding",
     "General",
     "Electrical Engineering",
     "Business",
