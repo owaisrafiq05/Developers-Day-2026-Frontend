@@ -146,14 +146,14 @@ export default function RegistrationForm() {
     const searchParams = useSearchParams()
     const paramCompetitionId = searchParams.get('competition')
     const paramCategory = searchParams.get('category')
+    const BACode = searchParams.get('ba-code')
     useEffect(() => {
-        if (paramCompetitionId) {
-            setFormData((prev) => ({
-                ...prev,
-                competitionId: paramCompetitionId,
-            }));
-        }
-    }, [paramCompetitionId]);
+        setFormData((prev) => ({
+            ...prev,
+            ...(paramCompetitionId && { competitionId: paramCompetitionId }),
+            ...(BACode && { referenceCode: BACode }),
+        }));
+    }, [paramCompetitionId, BACode]);
     useEffect(() => {
         if (!paramCategory || competitions.length === 0) return;
 
@@ -834,7 +834,7 @@ export default function RegistrationForm() {
                             <div>
                                 <label className="text-red-primary text-xs font-mono mb-2 block">02 (OPTIONAL)</label>
                                 <Input
-                                    placeholder="REFERENCE_CODE"
+                                    placeholder="REFERENCE_CODE (AKH677)"
                                     value={formData.referenceCode}
                                     onValueChange={(value) => updateFormData("referenceCode", value)}
                                     classNames={{
@@ -1315,7 +1315,7 @@ export default function RegistrationForm() {
                                                 className="min-h-[66px] w-[300px] max-w-full"
                                             />
                                         </div>
-                                        
+
                                     </>
                                 )}
                             </div>

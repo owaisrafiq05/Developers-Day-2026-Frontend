@@ -1,20 +1,17 @@
 "use client";
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@heroui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import CompetitionCard from "./competition-card";
 import type { CompetitionWithCategory } from "@/types/competitions";
 
-//basically 1 hi to competition hai
-//to layout kuch aisa banega: left column pe 1 comp right pe uskay abray may kch bhi phekdo
-//right k liye info k name k cards bnjayengay
 type Info = {
   id: string;
   title: string;
-  short: string;//initial display may yay ayega
-  lines: string[];//click krne pe yay ayega
+  short: string;
+  lines: string[];
 };
-
 
 const projectXtremePanels: Info[] = [
   {
@@ -60,40 +57,38 @@ const projectXtremePanels: Info[] = [
   },
 ];
 
-interface ProjectXtremePageProps {
-  initialCompetition: CompetitionWithCategory | null;
-  initialError?: string | null;
-}
-
-export default function ProjectXtremePage({
-  initialCompetition,
-  initialError = null,
-}: ProjectXtremePageProps) {
-
+export default function ProjectXtremePage() {
   const [activePanelId, setActivePanelId] = useState<string | null>(null);
   const projectCompetition = initialCompetition;
   const competitionError = initialError;
 
-  const activePanel = useMemo(
-    () => projectXtremePanels.find((panel) => panel.id === activePanelId) || null,
-    [activePanelId]
-  );
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const competitions = await fetchCompetitionsWithCategory();
+        if (!isMounted) return;
+        const projectXtreme = competitions.find((comp) => comp.id === "comp-project-xtreme") || null;
+        setProjectCompetition(projectXtreme);
+      } catch (error: any) {
+        if (!isMounted) return;
+        setCompetitionError(error?.message || "Unable to load Project Xtreme details right now.");
+      }
+    })();
+    return () => { isMounted = false; };
+  }, []);
 
   const cardDescription = projectCompetition?.description?.trim()
     ? projectCompetition.description
     : "Show your project or FYP to an industry audience, receive direct expert feedback, and position your team for real opportunities. Project Xtreme is where your student idea is treated like the next serious product.";
-  //wah kia pheku description laya hu may
 
-  const competitionId = projectCompetition?.id || "comp-project-xtreme";
-
-  //redirect copied from asfand
+  const competitionId = projectCompetition?.id;
   const registerHref = `/register?competition=${competitionId}&category=Project%20Xtreme`;
 
   return (
     <section
       className="bg-[var(--bg-color)] text-white py-16 md:py-24 px-4"
-      //style={{ "--color": "#b8ce6e", "--bg-color": "#0B1200" } as React.CSSProperties}
-      style={{ "--color": "#C6FF00", "--bg-color": "#0B1200" } as React.CSSProperties}
+      style={{ "--color": "#8FBF2F", "--bg-color": "#0A1003" } as React.CSSProperties}
     >
       <div className="container mx-auto max-w-6xl">
         <motion.div
@@ -150,7 +145,7 @@ export default function ProjectXtremePage({
 
         <motion.div
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start"
           initial="hidden"
           variants={{
             hidden: {},
@@ -159,7 +154,9 @@ export default function ProjectXtremePage({
             },
           }}
         >
+          {/* LEFT — pinned to top, never grows */}
           <motion.div
+            className="self-start"
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: {
@@ -188,8 +185,9 @@ export default function ProjectXtremePage({
             )}
           </motion.div>
 
+          {/* RIGHT — expands independently */}
           <motion.div
-            className="grid grid-cols-1 gap-4"
+            className="grid grid-cols-1 gap-4 content-start"
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: {
@@ -199,57 +197,58 @@ export default function ProjectXtremePage({
               },
             }}
           >
-            {projectXtremePanels.map((panel) => (
-              <div
-                key={panel.id}
-                className="bg-[#111214] border border-[#2E3642] p-5 flex items-center justify-between gap-4"
-              >
-                <div>
-                  <h2 className="text-lg font-bold uppercase tracking-wide">{panel.title}</h2>
-                  <p className="text-sm text-gray-300 mt-1">{panel.short}</p>
-                </div>
-                <Button
-                  radius="none"
-                  className="border border-[var(--color)] bg-transparent text-[var(--color)] font-bold text-xs px-5 hover:bg-[var(--color)]/10 w-[120px] min-w-[120px] justify-center whitespace-nowrap"
-                  onPress={() => setActivePanelId(panel.id)}
+            {projectXtremePanels.map((panel) => {
+              const isOpen = activePanelId === panel.id;
+              return (
+                <div
+                  key={panel.id}
+                  className="bg-[#111214] border border-[#2E3642] overflow-hidden"
                 >
-                  MORE INFO
-                </Button>
-              </div>
-            ))}
+                  <div className="px-4 py-3 sm:p-5 flex items-center justify-between gap-4">
+                    <div>
+                      <h2 className="text-lg font-bold uppercase tracking-wide">{panel.title}</h2>
+                      <p className="text-xs sm:text-sm text-gray-300 mt-1">{panel.short}</p>
+                    </div>
+                    <Button
+                      isIconOnly
+                      radius="none"
+                      className="border border-[var(--color)] bg-transparent text-[var(--color)] hover:bg-[var(--color)]/10 w-10 h-10 min-w-10 flex-shrink-0"
+                      aria-label={isOpen ? "Collapse" : "Expand"}
+                      onPress={() => setActivePanelId(isOpen ? null : panel.id)}
+                    >
+                      {isOpen
+                        ? <ChevronUp size={18} strokeWidth={2.5} />
+                        : <ChevronDown size={18} strokeWidth={2.5} />
+                      }
+                    </Button>
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                      >
+                        <div className="px-5 pb-5 border-t border-[#2E3642] pt-4">
+                          <ul className="space-y-2 list-disc px-6">
+                            {panel.lines.map((line) => (
+                              <li key={line}>
+                                <p className="text-sm text-gray-200 leading-relaxed">{line}</p>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </motion.div>
         </motion.div>
-
-        {activePanel && (
-          <div
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setActivePanelId(null)}
-          >
-            <div
-              className="w-full max-w-2xl bg-[#101316] border border-[var(--color)] p-6 md:p-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <h3 className="text-2xl font-bold uppercase text-white">{activePanel.title}</h3>
-                <Button
-                  radius="none"
-                  variant="bordered"
-                  className="border-[var(--color)] text-[var(--color)]"
-                  onPress={() => setActivePanelId(null)}
-                >
-                  CLOSE
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {activePanel.lines.map((line) => (
-                  <div key={line} className="bg-[#1A1A1A] border border-[#27303A] p-3">
-                    <p className="text-sm text-gray-200 leading-relaxed">{line}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

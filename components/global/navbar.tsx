@@ -34,15 +34,15 @@ import Image from "next/image";
 import { LayoutGroup, motion, AnimatePresence } from "framer-motion";
 
 const modules = [
-  { id: "tech-quest",    label: "Tech Quest",      icon: CpuChipIcon },
-  { id: "software-eng",  label: "Software Eng",    icon: CommandLineIcon },
-  { id: "ai-data",       label: "AI & Data",       icon: CircleStackIcon },
-  { id: "dev-design",    label: "Dev & Design",    icon: ComputerDesktopIcon },
-  { id: "coding",        label: "Coding",          icon: CodeBracketIcon },
-  { id: "general",       label: "General",         icon: FlagIcon },
-  { id: "electrical-eng",label: "Electrical Eng",  icon: BoltIcon },
-  { id: "business",      label: "Business",        icon: PresentationChartBarIcon },
-  { id: "project-xtreme",label: "Project Xtreme",  icon: Squares2X2Icon },
+  { id: "tech-quest", label: "Tech Quest", icon: CpuChipIcon },
+  { id: "software-eng", label: "Software Eng", icon: CommandLineIcon },
+  { id: "ai-data", label: "AI & Data", icon: CircleStackIcon },
+  { id: "dev-design", label: "Dev & Design", icon: ComputerDesktopIcon },
+  { id: "coding", label: "Coding", icon: CodeBracketIcon },
+  { id: "general", label: "General", icon: FlagIcon },
+  { id: "electrical-eng", label: "Electrical Eng", icon: BoltIcon },
+  { id: "business", label: "Business", icon: PresentationChartBarIcon },
+  { id: "project-xtreme", label: "Project Xtreme", icon: Squares2X2Icon },
 ];
 
 
@@ -72,10 +72,10 @@ export default function AppNavbar() {
   }, []);
 
   const menuItems = [
-    { name: "HOME",         href: "/",            icon: HomeIcon },
-    { name: "EVENT_DETAILS",href: "/event-details",icon: CalendarIcon },
-    { name: "OUR_TEAM",     href: "/our-team",    icon: UserGroupIcon },
-    { name: "CONTACT_US",   href: "/contact-us",  icon: EnvelopeIcon },
+    { name: "HOME", href: "/", icon: HomeIcon },
+    { name: "EVENT_DETAILS", href: "/event-details", icon: CalendarIcon },
+    { name: "OUR_TEAM", href: "/our-team", icon: UserGroupIcon },
+    { name: "CONTACT_US", href: "/contact-us", icon: EnvelopeIcon },
   ];
 
   const isModulesActive = pathname.startsWith("/modules");
