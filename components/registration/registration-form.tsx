@@ -111,6 +111,10 @@ function normalizeInstitutionName(value: string): string {
     return value.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+function normalizeCategoryQuery(value: string): string {
+    return value.trim().toLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ");
+}
+
 export default function RegistrationForm() {
     const turnstileSiteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
     const [activeTab, setActiveTab] = useState<TabType>("team");
@@ -159,7 +163,7 @@ export default function RegistrationForm() {
 
         const availableCategories = Array.from(new Set(competitions.map((c) => c.category)));
         const matchedCategory = availableCategories.find(
-            (category) => normalizeInstitutionName(category) === normalizeInstitutionName(paramCategory)
+            (category) => normalizeCategoryQuery(category) === normalizeCategoryQuery(paramCategory)
         );
 
         if (matchedCategory) {

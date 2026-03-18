@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@heroui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import CompetitionCard from "./competition-card";
 import type { CompetitionWithCategory } from "@/types/competitions";
 
@@ -57,38 +57,30 @@ const projectXtremePanels: Info[] = [
   },
 ];
 
-export default function ProjectXtremePage() {
+interface ProjectXtremePageProps {
+  initialCompetition: CompetitionWithCategory | null;
+  initialError?: string | null;
+}
+
+export default function ProjectXtremePage({
+  initialCompetition,
+  initialError = null,
+}: ProjectXtremePageProps) {
   const [activePanelId, setActivePanelId] = useState<string | null>(null);
   const projectCompetition = initialCompetition;
   const competitionError = initialError;
-
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      try {
-        const competitions = await fetchCompetitionsWithCategory();
-        if (!isMounted) return;
-        const projectXtreme = competitions.find((comp) => comp.id === "comp-project-xtreme") || null;
-        setProjectCompetition(projectXtreme);
-      } catch (error: any) {
-        if (!isMounted) return;
-        setCompetitionError(error?.message || "Unable to load Project Xtreme details right now.");
-      }
-    })();
-    return () => { isMounted = false; };
-  }, []);
 
   const cardDescription = projectCompetition?.description?.trim()
     ? projectCompetition.description
     : "Show your project or FYP to an industry audience, receive direct expert feedback, and position your team for real opportunities. Project Xtreme is where your student idea is treated like the next serious product.";
 
-  const competitionId = projectCompetition?.id;
-  const registerHref = `/register?competition=${competitionId}&category=Project%20Xtreme`;
+  const competitionId = projectCompetition?.id || "comp-project-xtreme";
+  const registerHref = `/register?competition=${competitionId}&category=project-xtreme`;
 
   return (
     <section
       className="bg-[var(--bg-color)] text-white py-16 md:py-24 px-4"
-      style={{ "--color": "#8FBF2F", "--bg-color": "#0A1003" } as React.CSSProperties}
+      style={{ "--color": "#C6FF00", "--bg-color": "#0B1200" } as React.CSSProperties}
     >
       <div className="container mx-auto max-w-6xl">
         <motion.div
@@ -217,8 +209,8 @@ export default function ProjectXtremePage() {
                       onPress={() => setActivePanelId(isOpen ? null : panel.id)}
                     >
                       {isOpen
-                        ? <ChevronUp size={18} strokeWidth={2.5} />
-                        : <ChevronDown size={18} strokeWidth={2.5} />
+                        ? <ChevronUpIcon className="w-5 h-5" />
+                        : <ChevronDownIcon className="w-5 h-5" />
                       }
                     </Button>
                   </div>
