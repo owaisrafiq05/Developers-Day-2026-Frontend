@@ -10,7 +10,7 @@ export const TIME_LABELS = [
 ];
 
 export const CATEGORY_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-    "Project Xtreme": { bg: "bg-[#0A1003]/60", border: "border-[#8FBF2F]", text: "text-[#CDEB8B]" },
+    "Project Xtreme": { bg: "bg-[#0B1200]/60", border: "border-[#C6FF00]", text: "text-[#ECFFB3]" },
     "Software Engineering": { bg: "bg-[#060010]/60", border: "border-[#7C3AED]", text: "text-[#c4b5fd]" },
     "Core Coding": { bg: "bg-[#000613]/60", border: "border-[#2563EB]", text: "text-[#bfdbfe]" },
     "Tech Quest": { bg: "bg-[#0A0600]/60", border: "border-[#F59E0B]", text: "text-[#fde68a]" },
