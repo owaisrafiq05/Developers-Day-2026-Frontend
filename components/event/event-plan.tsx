@@ -240,7 +240,7 @@ export default function EventPlan({ competitions }: CompetitionProps) {
     return (
         <section className="bg-dark-red text-white py-16 md:py-16">
             <div className="container mx-auto px-4 md:px-6">
-                <div className="border-l-3 border-red-primary">
+                <div className="border-l-3 border-red-primary mb-4 sm:mb-10">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
