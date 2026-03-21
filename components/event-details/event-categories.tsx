@@ -58,7 +58,6 @@ export function EventCategories() {
                         V1
                     </span>
                 </motion.div>
-                //red divider jokay right side say scale krega
                 <motion.div
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: 1 }}
