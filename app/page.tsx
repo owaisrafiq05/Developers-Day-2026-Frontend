@@ -9,13 +9,13 @@ import { RegistrationBanner } from "@/components/registration";
 
 const title = "Developer's Day 2026 | FAST NUCES Karachi";
 const description =
-  "Join Developer's Day 2026 at FAST NUCES Karachi for coding competitions, networking, and innovation-led experiences.";
+  "Join Developer's Day 2026 (DevDay) at FAST NUCES Karachi, the premier tech event featuring coding competitions, hackathons, AI, networking, and innovation-led experiences for developers.";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.devday26.com";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Developer's Day",
+  name: "Developer's Day | FAST NUCES Karachi",
   url: siteUrl,
   logo: `${siteUrl}/logo-1.png`,
   sameAs: ["https://www.linkedin.com/company/developersday/","https://www.instagram.com/developersday/","https://www.facebook.com/developersday/"],
@@ -24,7 +24,7 @@ const organizationJsonLd = {
 const eventJsonLd = {
   "@context": "https://schema.org",
   "@type": "Event",
-  name: "Developer's Day 2026",
+  name: "Developer's Day 2026 | FAST NUCES Karachi",
   description,
   "startDate": "2026-04-16T09:00:00+05:00",
   "endDate": "2026-04-16T18:00:00+05:00",
@@ -34,7 +34,7 @@ const eventJsonLd = {
   image: [`${siteUrl}/logo-1.png`],
   organizer: {
     "@type": "Organization",
-    name: "Developer's Day",
+    name: "Developer's Day | FAST NUCES Karachi",
     url: siteUrl,
   },
   location: {
@@ -54,6 +54,25 @@ const eventJsonLd = {
 export const metadata: Metadata = {
   title,
   description,
+  keywords: [
+    "Developer's Day",
+    "DevDay FAST NUCES Karachi",
+    "Developers Day FAST",
+    "Developers Day",
+    "Devday FAST NUCES Karachi",
+    "DevDay 2026",
+    "FAST NUCES Karachi",
+    "FAST NU",
+    "FAST University",
+    "Developer's Day FAST NUCES Karachi",
+    "Coding Competition Pakistan",
+    "Hackathon Karachi",
+    "Tech Event",
+    "Software Engineering",
+    "Computer Science",
+    "FAST-NUCES",
+    "Developers Day 26",
+  ],
   alternates: {
     canonical: "/",
   },

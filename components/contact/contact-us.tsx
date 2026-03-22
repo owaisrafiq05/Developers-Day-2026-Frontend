@@ -218,6 +218,51 @@ export default function ContactUs() {
                 </motion.div>
               </ContactCard>
             </motion.div>
+
+            <motion.div
+
+              initial={{ opacity: 0, x: -50 }}
+
+              whileInView={{ opacity: 1, x: 0 }}
+
+              //utna hi rakhte hain jitna pichle walo ka hia
+
+              //viewport={{ once: true, margin: "-70px" }}
+
+              //viewport={{ once: true, margin: "-65px" }}
+
+              viewport={{ once: true, margin: "-60px" }}
+
+              //transition={{ duration: 0.80, delay: 0.60, ease: [0.25, 0.1, 0.25, 1] }}
+
+              
+              transition={{ duration: 0.65, delay: 0.24, ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              <ContactCard title="FREQUENTLY_ASKED_QUESTIONS">
+                <p className="text-gray-400 text-sm mb-6">
+                  Find quick answers to common questions regarding Developer's Day.
+                </p>
+
+                <Link
+                  href="/faq"
+                  className="block"
+                >
+                  <div className="flex items-center justify-between gap-3 bg-red-primary p-4 cursor-pointer hover:opacity-90 transition w-full">
+                    <span className="text-white font-mono text-sm">
+                      VISIT_FAQ_PAGE
+                    </span>
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </div>
+                </Link>
+              </ContactCard>
+            </motion.div>
           </div>
 
           {/* Right Column — map slides in from right */}

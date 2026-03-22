@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Developer's Day 2026",
-  description: "Developer's Day 2026 is the flagship event at FAST NUCES Karachi, dedicated to celebrating and empowering the developer community. Join us for a day of innovation, learning, and networking with industry leaders and fellow developers.",
+  name: "Developer's Day 2026 | FAST NUCES Karachi",
+  description: "Developer's Day 2026 (DevDay) is the flagship tech event at FAST NUCES Karachi, dedicated to celebrating and empowering the developer community in Pakistan. Join us for a day of innovation, coding competitions, hackathons, and networking with industry leaders.",
   navItems: [
     {
       label: "Home",
