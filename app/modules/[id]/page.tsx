@@ -218,6 +218,17 @@ const idToCategoryMap: { [key: string]: string } = {
     "business": "Business",
 };
 
+const idToZonesMap: { [key: string]: string | null } = {
+    "coding": "The Control Room",
+    "software-eng": "Operation: Warzone",
+    "tech-quest": "The Upside Down",
+    "dev-design": "The Wizard’s Atelier",
+    "ai-data": "The Gaming Arena",
+    "general": null,
+    "electrical-eng": null,
+    "business": null,
+};
+
 export default async function ModulePage({
     params,
 }: {
@@ -259,6 +270,7 @@ export default async function ModulePage({
                 color={selectedModule.color}
                 bgColor={selectedModule.bgColor}
                 categoryCompetitions={categoryCompetitions}
+                zone={idToZonesMap[moduleId]}
             />
             <RegistrationBanner />
         </>

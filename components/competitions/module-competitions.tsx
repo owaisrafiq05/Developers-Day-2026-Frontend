@@ -47,6 +47,7 @@ export interface CompetitionsCateogoryProps {
   color: string;
   bgColor: string;
   categoryCompetitions: Competition[];
+  zone: string | null;
 }
 
 export default function ModuleCompetitions({
@@ -57,6 +58,7 @@ export default function ModuleCompetitions({
   color,
   bgColor,
   categoryCompetitions,
+  zone
 }: CompetitionsCateogoryProps) {
 
   return (
@@ -139,10 +141,53 @@ export default function ModuleCompetitions({
         >
           <Ticker categoryId={id} color={color} bgColor={bgColor} />
         </motion.div>
+
+        {/* ── Zone Context ── */}
+        {zone && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6 }}
+            className="mt-28 sm:mt-32 relative overflow-hidden"
+          >
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+              {/* Left: Zone Info */}
+              <div>
+                <p className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-gray-500 uppercase sm:mb-2">
+                  Simulation_Context
+                </p>
+
+                <h3 className="text-lg sm:text-xl md:text-2xl font-mono font-bold uppercase text-white sm:mb-2">
+                  <span style={{ color }}>{zone}</span>
+                </h3>
+
+                <p className="text-gray-400 text-[11px] sm:text-xs font-mono uppercase tracking-wider">
+                  Environment initialized. Modules operating within this zone.
+                </p>
+              </div>
+
+              {/* Right: CTA */}
+              <button
+                onClick={() => window.location.href = "/the-simulation"}
+                className="font-mono text-[10px] font-bold sm:text-xs tracking-[0.25em] uppercase px-4 py-2 border transition-all hover:bg-[var(--color)]/20 cursor-pointer"
+                style={{
+                  borderColor: color,
+                  color: color
+                }}
+              >
+                View_Full_Lore →
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* ── Cards Grid ── */}
         <motion.div
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-32 sm:mt-40"
+          className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${zone ? "mt-8 sm:mt-10" : "mt-28 sm:mt-32"}`}
           initial="hidden"
           variants={containerVariants}
         >
