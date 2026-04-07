@@ -24,7 +24,7 @@ export default function EventInfo() {
   });
 
   useEffect(() => {
-    const targetDate = new Date("2026-04-16T00:00:00").getTime();
+    const targetDate = new Date("2026-04-30T00:00:00").getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
